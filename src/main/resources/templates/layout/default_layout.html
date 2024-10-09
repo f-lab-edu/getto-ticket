@@ -1,0 +1,19 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block layout:fragment="head">
+    <title>getto ticket</title>
+
+    <link th:href="@{/css/common.css}" rel="stylesheet" />
+</th:block>
+
+<body>
+    <div th:replace="fragment/header::headerTest"></div>
+<!--    <div th:replace="~{fragment/header :: headerTest}"></div>-->
+
+    <th:block layout:fragment="content"></th:block>
+
+    <div th:replace="~{fragment/footer::footer}"></div>
+</body>
+</html>

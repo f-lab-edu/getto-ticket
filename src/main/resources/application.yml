@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: gettoticket
+  devtools:
+    restart:
+      enabled: true
+
+  thymeleaf:
+    enabled: true
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    check-template-location: true
+
+server:
+  shutdown: graceful
