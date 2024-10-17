@@ -1,9 +1,13 @@
 spring:
   application:
     name: gettoticket
+
   devtools:
     restart:
       enabled: true
+
+  config:
+    import: classpath:application-db.yml
 
   thymeleaf:
     enabled: true
@@ -14,3 +18,14 @@ spring:
 
 server:
   shutdown: graceful
+
+# Mapper
+mybatis:
+  mapper-locations: mapper/**/*.xml
+
+# Logback
+logging: classpath:logback-spring.xml
+
+# jwt
+jwt:
+  secret: 5301e9c91b684834b03f432b967ce3a6587078ab34dcf91238a7e7f3800f7971
