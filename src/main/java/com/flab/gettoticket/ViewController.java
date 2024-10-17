@@ -1,13 +1,14 @@
-package com.hyeonsunny.gettoticket;
+package com.flab.gettoticket;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController {
+public class ViewController {
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(){
         return "content/home";
     }
+
 }

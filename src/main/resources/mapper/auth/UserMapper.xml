@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flab.gettoticket.auth.mapper.UserMapper">
+
+    <select id="selectUserInfo" parameterType="string" resultType="com.flab.gettoticket.auth.dto.UserResponse">
+        SELECT
+            email
+             , name
+             , password
+             , role
+        FROM
+            users
+        WHERE
+            email = #{email}
+    </select>
+
+    <insert id="insertUser" parameterType="com.flab.gettoticket.auth.dto.UserRequest">
+        INSERT INTO users (
+            email
+             , name
+             , password
+             , role
+             , created_at
+        ) VALUES (
+            #{email}
+            , #{name}
+            , #{password}
+            , #{role}
+            , NOW()
+        )
+    </insert>
+</mapper>
