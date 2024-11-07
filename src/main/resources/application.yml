@@ -20,12 +20,12 @@ server:
   shutdown: graceful
 
 # Mapper
-mybatis:
-  mapper-locations: mapper/**/*.xml
+#mybatis:
+#  mapper-locations: mapper/**/*.xml
 
 # Logback
 logging: classpath:logback-spring.xml
 
 # jwt
-jwt:
-  secret: 5301e9c91b684834b03f432b967ce3a6587078ab34dcf91238a7e7f3800f7971
+#jwt:
+#  secret: 5301e9c91b684834b03f432b967ce3a6587078ab34dcf91238a7e7f3800f7971
