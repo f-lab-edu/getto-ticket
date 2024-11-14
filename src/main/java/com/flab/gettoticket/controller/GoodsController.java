@@ -61,7 +61,7 @@ public class GoodsController {
 
     // 상품 삭제
     @DeleteMapping("/goods/{goodsId}")
-    public String addGoods(@PathVariable String goodsId) {
+    public String removeGoods(@PathVariable String goodsId) {
         String result = "상품 삭제에 성공하였습니다.";
 
         try {
