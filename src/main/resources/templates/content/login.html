@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>gettoticket</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="container mt-5">
+
+<h2>로그인</h2>
+
+<!-- 로그인 상태 표시 -->
+<div id="login-status" th:if="${session.loginUser != null}">
+    <p>안녕하세요, <span th:text="${session.loginUser.name}"></span>님!</p>
+    <button class="btn btn-danger" onclick="logout()">로그아웃</button>
+</div>
+<div id="login-form" th:if="${session.loginUser == null}">
+    <p>로그인되지 않은 상태입니다.</p>
+
+    <!-- 로그인 폼 -->
+    <div class="mb-3">
+        <label for="email" class="form-label">이메일</label>
+        <input type="email" class="form-control" id="email" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">비밀번호</label>
+        <input type="password" class="form-control" id="password" required>
+    </div>
+    <button class="btn btn-primary" onclick="login()">로그인</button>
+    <button class="btn" onclick="register()">회원가입</button>
+</div>
+
+<!-- 로그아웃 결과 메시지 -->
+<div class="mt-3">
+    <p id="message"></p>
+</div>
+
+</body>
+<script>
+    function register() {
+        window.location.href = "/register";
+    }
+
+    function login() {
+        var email = $('#email').val();
+        var password = $('#password').val();
+
+        fetch("/user/signin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",  // 세션 쿠키를 포함하여 전송
+            body: JSON.stringify({ email: email, password: password })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code == 1) {
+                    location.reload(true);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    function logout() {
+        fetch("/user/logout", {
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code == 1) {
+                    location.reload(true);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+</script>
+</html>
