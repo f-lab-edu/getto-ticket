@@ -2,7 +2,6 @@ package com.flab.gettoticket.repository;
 
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.model.PlayTime;
-import com.flab.gettoticket.model.Zone;
 
 import java.util.List;
 
