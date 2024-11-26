@@ -5,12 +5,15 @@ import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.model.PlayTime;
 import com.flab.gettoticket.repository.PlayRepository;
 import com.flab.gettoticket.service.PlayService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PlayServiceImpl implements PlayService {
     private final PlayRepository playRepository;
 
@@ -19,22 +22,43 @@ public class PlayServiceImpl implements PlayService {
     }
 
     @Override
-    public List<String> findPlayAtList(String goodsId, String startDate, String endDate) {
-        return playRepository.selectPlayAtList(goodsId, startDate, endDate);
+    public List<LocalDate> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> list = new ArrayList<>();
+        try {
+            list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
+        } catch (Exception e) {
+            log.error("공연일 리스트 조회 중 예외 발생 goodsId: {}. startDate: {}. endDate: {}. Error: {}", goodsId, startDate, endDate, e.getMessage(), e);
+            throw new RuntimeException("공연일 리스트 조회에 실패했습니다.", e);
+        }
+        return list;
     }
 
     @Override
-    public List<PlayTime> findPlayOrder(String goodsId, String playAt) {
-        return playRepository.selectTimeTable(goodsId, playAt);
+    public List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt) {
+        List<PlayTime> list = new ArrayList<>();
+        try {
+            list = playRepository.selectTimeTable(goodsId, playAt);
+        } catch (Exception e) {
+            log.error("공연 회차 순서 리스트 조회 중 예외 발생 goodsId: {}. playAt: {}. Error: {}", goodsId, playAt, e.getMessage(), e);
+            throw new RuntimeException("공연 회차 순서 리스트 조회에 실패했습니다.", e);
+        }
+        return list;
     }
 
     @Override
-    public List<SeatCountDTO> findSeatCount(String playTimeId) {
-        return playRepository.selectSeatCount(playTimeId);
+    public List<SeatCountDTO> findSeatCount(long playTimeId) {
+        List<SeatCountDTO> list = new ArrayList<>();
+        try {
+            list = playRepository.selectSeatCount(playTimeId);
+        } catch (Exception e) {
+            log.error("n회차의 구역별 잔여 좌석 개수 playTimeId: {}, Error: {}", playTimeId, e.getMessage(), e);
+            throw new RuntimeException("n회차의 구역별 잔여 좌석 개수 조회에 실패했습니다.", e);
+        }
+        return list;
     }
 
     @Override
-    public SeatDTO findSeatDTO(String goodsId, String playAt) {
+    public SeatDTO findSeatDTO(long goodsId, LocalDate playAt) {
         SeatDTO seatDateDto = new SeatDTO();
         List<PlayTime> timeTableList = new ArrayList<>();
         List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
@@ -43,14 +67,15 @@ public class PlayServiceImpl implements PlayService {
             timeTableList = findPlayOrder(goodsId, playAt);
 
             if(!timeTableList.isEmpty()) {
-                String playTimeId = timeTableList.get(0).getPlayTimeId();
+                long playTimeId = timeTableList.get(0).getPlayTimeId();
                 seatCountDTOList = findSeatCount(playTimeId);
             }
 
             seatDateDto.setTimeTableList(timeTableList);
             seatDateDto.setSeatCountList(seatCountDTOList);
         } catch(Exception e) {
-            e.printStackTrace();;
+            log.error("첫번째 회차의 구역별 잔여 좌석 개수 조회 중 예외 발생 goodsId: {} and playAt: {}. Error: {}", goodsId, playAt, e.getMessage(), e);
+            throw new RuntimeException("구역별 잔여 좌석 개수 조회에 실패했습니다.", e);
         }
 
         return seatDateDto;

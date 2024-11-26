@@ -4,11 +4,12 @@ import com.flab.gettoticket.dto.SeatDTO;
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.model.PlayTime;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PlayService {
-    SeatDTO findSeatDTO(String goodsId, String playAt);
-    List<String> findPlayAtList(String goodsId, String startDate, String endDate);
-    List<SeatCountDTO> findSeatCount(String playTimeId);
-    List<PlayTime> findPlayOrder(String goodsId, String playAt);
+    SeatDTO findSeatDTO(long goodsId, LocalDate playAt);
+    List<LocalDate> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate);
+    List<SeatCountDTO> findSeatCount(long playTimeId);
+    List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt);
 }

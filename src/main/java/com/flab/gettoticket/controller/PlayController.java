@@ -1,18 +1,20 @@
 package com.flab.gettoticket.controller;
 
-import com.flab.gettoticket.dto.PlayAtDTO;
+import com.flab.gettoticket.common.ApiResponse;
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.dto.SeatDTO;
 import com.flab.gettoticket.service.PlayService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.coyote.Response;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@RequestMapping("/play-time")
 @Slf4j
 public class PlayController {
     private final PlayService playService;
@@ -23,18 +25,18 @@ public class PlayController {
     /**
      * 공연일 리스트 조회
      * @param goodsId 상품 id
-     * @param startDate yyyymmdd
-     * @param endDate yyyymmdd
+     * @param startDate yyyyMMdd
+     * @param endDate yyyyMMdd
      * @return List
      */
-    @GetMapping("/play")
-    public PlayAtDTO playAtList(@RequestParam String goodsId, @RequestParam String startDate, @RequestParam String endDate) {
-        List<String> list = playService.findPlayAtList(goodsId, startDate, endDate);
-
-        PlayAtDTO dto = new PlayAtDTO();
-        dto.setPlayAt(list);
-
-        return dto;
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<List<LocalDate>>> playAtList(
+            @RequestParam long goodsId
+            , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate startDate
+            , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate endDate
+    ) {
+        List<LocalDate> data = playService.findPlayAtList(goodsId, startDate, endDate);
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
     /**
@@ -42,20 +44,25 @@ public class PlayController {
      * @param playTimeId n회차의 공연시간 id
      * @return
      */
-    @GetMapping("/play/order/{playTimeId}")
-    public List<SeatCountDTO> playOrderInfo(@PathVariable String playTimeId) {
-        return playService.findSeatCount(playTimeId);
+    @GetMapping("/order/{playTimeId}")
+    public ResponseEntity<ApiResponse<List<SeatCountDTO>>> playOrderInfo(@PathVariable long playTimeId) {
+        List<SeatCountDTO> data = playService.findSeatCount(playTimeId);
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
     /**
      * 특정 공연일 첫번째 회차의 구역별 잔여 좌석 개수
      * @param goodsId 상품 id
-     * @param playAt 공연일(yyyymmddd)
+     * @param playAt 공연일(yyyyMMdd)
      * @return Object
      */
-    @GetMapping("/play/first")
-    public SeatDTO firstPlayOrderInfo(@RequestParam String goodsId, @RequestParam String playAt) {
-        return playService.findSeatDTO(goodsId, playAt);
+    @GetMapping("/order/first")
+    public ResponseEntity<ApiResponse<SeatDTO>> firstPlayOrderInfo(
+            @RequestParam long goodsId
+            , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate playAt
+    ) {
+        SeatDTO data = playService.findSeatDTO(goodsId, playAt);
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
 }
