@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,109 +19,161 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
     }
 
     @Override
-    public List<Goods> selectGoodsList(int startIndex, int amount) {
-        String columns = "a.id, c.name AS genre_name, a.title, a.`desc`, a.performance_start_date, a.performance_end_date, a.performance_time, b.name AS location, b.x, b.y";
-        String select = "SELECT " + columns + " FROM goods a ";
-        String join = "LEFT JOIN place b ON a.place_id = b.id LEFT JOIN genre c ON a.genre_id = c.id ";
-        String limit = "LIMIT " + startIndex + ", " + amount;
+    public List<Goods> selectGoodsList(int limit, long offset) {
+        String sql = """
+                    SELECT 
+                        a.id
+                       , c.name AS genre_name
+                       , a.title
+                       , a.`desc`
+                       , a.performance_start_date
+                       , a.performance_end_date
+                       , a.performance_time
+                       , b.name AS location
+                       , b.x
+                       , b.y
+                    FROM goods a
+                    LEFT JOIN place b ON a.place_id = b.id
+                    LEFT JOIN genre c ON a.genre_id = c.id
+                    WHERE a.id > ?
+                    ORDER BY a.id
+                    LIMIT ?
+                    """;
 
-        String sql = select + join + limit;
+        List<Goods> goodsList = jdbcTemplate.query(sql, goodsRowMapper(), offset, limit);
 
-        List<Goods> goodsList = jdbcTemplate.query(sql, goodsRowMapper());
-
-        return goodsList.isEmpty() ? null : goodsList;
+        return goodsList;
     }
 
     @Override
-    public Goods selectGoods(String goodsId) {
-        String columns = "a.id, c.name AS genre_name, a.title, a.`desc`, a.performance_start_date, a.performance_end_date, a.performance_time, b.name AS location, b.x, b.y";
-        String select = "SELECT " + columns + " FROM goods a ";
-        String join = "LEFT JOIN place b ON a.place_id = b.id LEFT JOIN genre c ON a.genre_id = c.id ";
-        String where = "WHERE a.id = ?";
+    public Goods selectGoods(long id) {
+        String sql = """
+                SELECT 
+                    a.id
+                    , c.name AS genre_name
+                    , a.title
+                    , a.`desc`
+                    , a.performance_start_date
+                    , a.performance_end_date
+                    , a.performance_time
+                    , b.name AS location
+                    , b.x
+                    , b.y 
+                FROM goods a
+                LEFT JOIN place b ON a.place_id = b.id 
+                LEFT JOIN genre c ON a.genre_id = c.id
+                WHERE a.id = ?
+                """;
 
-        String sql = select + join + where;
+        List<Goods> goodsList = jdbcTemplate.query(sql, goodsRowMapper(), id);
 
-        log.info("sql: " + sql);
-
-        List<Goods> goodsList = jdbcTemplate.query(sql, goodsRowMapper(), goodsId);
-
-        return goodsList.isEmpty() ? null : goodsList.get(0);
+        return goodsList.get(0);
     }
 
+    @Transactional
     @Override
     public void insertGoods(Goods goods) {
-        String columns = "id, title, `desc`, performance_start_date, performance_end_date, performance_time, genre_id, place_id";
-        String sql = "INSERT INTO goods (" + columns + ") VALUES (?,?,?,?,?,?,?,?)";
+        String sqlForSequence = "SELECT NEXTVAL(goods_seq) FROM DUAL";
 
-        String id = goods.getId();
+        String sql = """
+                    INSERT INTO goods (
+                        id
+                        , title
+                        , `desc`
+                        , performance_start_date
+                        , performance_end_date
+                        , performance_time
+                        , genre_id
+                        , place_id
+                    ) 
+                    VALUES (?,?,?,?,?,?,?,?)
+                    """;
+
+        String goodsSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
+        long id = Integer.valueOf(goodsSeq);
         String title = goods.getTitle();
         String desc = goods.getDesc();
         String performanceStartDate = goods.getPerformanceStartDate();
         String performanceEndDate = goods.getPerformanceEndDate();
         String performanceTime = goods.getPerformanceTime();
-        String genreId = goods.getGenreId();
-        String placeId = goods.getPlaceId();
-
-        log.info("sql: " + sql);
+        long genreId = goods.getGenreId();
+        long placeId = goods.getPlaceId();
 
         jdbcTemplate.update(sql, id, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId);
     }
 
     @Override
     public void updateGoods(Goods goods) {
-        String sql = "UPDATE goods SET title=?, `desc`=?, performance_start_date=?, performance_end_date=?, performance_time=?, genre_id=?, place_id=? WHERE id=?";
+        String sql = """
+                    UPDATE goods SET 
+                        title=?
+                         ,`desc`=?
+                         , performance_start_date=?
+                         , performance_end_date=?
+                         , performance_time=?
+                         , genre_id=?
+                         , place_id=? 
+                    WHERE id=?
+                    """;
 
-        String id = goods.getId();
+        long id = goods.getId();
         String title = goods.getTitle();
         String desc = goods.getDesc();
         String performanceStartDate = goods.getPerformanceStartDate();
         String performanceEndDate = goods.getPerformanceEndDate();
         String performanceTime = goods.getPerformanceTime();
-        String genreId = goods.getGenreId();
-        String placeId = goods.getPlaceId();
-
-        log.info("sql: " + sql);
+        long genreId = goods.getGenreId();
+        long placeId = goods.getPlaceId();
 
         jdbcTemplate.update(sql, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId, id);
     }
 
     @Override
-    public void deleteGoods(String goodsId) {
+    public void deleteGoods(long id) {
         String sql = "DELETE FROM goods WHERE id=?";
 
-        jdbcTemplate.update(sql, goodsId);
+        jdbcTemplate.update(sql, id);
     }
 
     @Override
-    public List<Zone> selectZonePrice(String goodsId) {
-        String sql = "SELECT id, grade, name, price FROM zone WHERE goods_id = ? ORDER BY grade";
+    public List<Zone> selectZonePrice(long id) {
+        String sql = """
+                    SELECT 
+                        id
+                        , grade
+                        , name
+                        , price 
+                    FROM zone 
+                    WHERE goods_id = ? 
+                    ORDER BY grade
+                    """;
 
-        List<Zone> list = jdbcTemplate.query(sql, zoneRowMapper(), goodsId);
+        List<Zone> list = jdbcTemplate.query(sql, zoneRowMapper(), id);
 
-        return list.isEmpty() ? null : list;
+        return list;
     }
 
     private RowMapper<Goods> goodsRowMapper() {
         return ((rs, rowNum) -> {
-          Goods goods = new Goods();
-          goods.setId(rs.getString("id"));
-          goods.setGenreName(rs.getString("genre_name"));
-          goods.setTitle(rs.getString("title"));
-          goods.setDesc(rs.getString("desc"));
-          goods.setLocation(rs.getString("location"));
-          goods.setX(rs.getString("x"));
-          goods.setY(rs.getString("y"));
-          goods.setPerformanceStartDate(rs.getString("performance_start_date"));
-          goods.setPerformanceEndDate(rs.getString("performance_end_date"));
-          goods.setPerformanceTime(rs.getString("performance_time"));
-          return goods;
+            Goods goods = new Goods();
+            goods.setId(rs.getLong("id"));
+            goods.setGenreName(rs.getString("genre_name"));
+            goods.setTitle(rs.getString("title"));
+            goods.setDesc(rs.getString("desc"));
+            goods.setLocation(rs.getString("location"));
+            goods.setX(rs.getString("x"));
+            goods.setY(rs.getString("y"));
+            goods.setPerformanceStartDate(rs.getString("performance_start_date"));
+            goods.setPerformanceEndDate(rs.getString("performance_end_date"));
+            goods.setPerformanceTime(rs.getString("performance_time"));
+            return goods;
         });
     }
 
     private RowMapper<Zone> zoneRowMapper() {
         return ((rs, rowNum) -> {
             Zone zone = new Zone();
-            zone.setId(rs.getString("id"));
+            zone.setId(rs.getLong("id"));
             zone.setGrade(rs.getString("grade"));
             zone.setName(rs.getString("name"));
             zone.setPrice(rs.getInt("price"));

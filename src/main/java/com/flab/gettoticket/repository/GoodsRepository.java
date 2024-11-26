@@ -6,10 +6,10 @@ import com.flab.gettoticket.model.Zone;
 import java.util.List;
 
 public interface GoodsRepository {
-    List<Goods> selectGoodsList(int startIndex, int amount);
-    Goods selectGoods(String goodsId);
+    List<Goods> selectGoodsList(int limit, long offset);
+    Goods selectGoods(long id);
     void insertGoods(Goods goods);
     void updateGoods(Goods goods);
-    void deleteGoods(String goodsId);
-    List<Zone> selectZonePrice(String goodsId);
+    void deleteGoods(long id);
+    List<Zone> selectZonePrice(long id);
 }

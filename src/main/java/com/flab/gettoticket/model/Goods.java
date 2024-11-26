@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Goods {
-    private String id;
+    private long id;
     private String genreName;
     private String title;
     private String desc;
@@ -18,6 +18,6 @@ public class Goods {
     private String location;
     private String x;
     private String y;
-    private String genreId;
-    private String placeId;
+    private long genreId;
+    private long placeId;
 }

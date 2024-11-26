@@ -1,14 +1,20 @@
 package com.flab.gettoticket.controller;
 
+import com.flab.gettoticket.common.ApiResponse;
+import com.flab.gettoticket.common.ApiResponseCode;
 import com.flab.gettoticket.model.Goods;
 import com.flab.gettoticket.model.Zone;
 import com.flab.gettoticket.service.GoodsService;
+import com.flab.gettoticket.util.PageRequestUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/goods")
 @Slf4j
 public class GoodsController {
     private final GoodsService goodsService;
@@ -18,69 +24,48 @@ public class GoodsController {
     }
 
     // 상품 조회
-    @GetMapping("/goods")
-    public List<Goods> findGoodsList(@RequestParam int startIndex, @RequestParam int amount) {
-        return goodsService.findGoodsList(startIndex, amount);
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<List<Goods>>> findGoodsList(@RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequestUtil.of(page, size);
+        List<Goods> data = goodsService.findGoodsList(pageable);
+
+        log.info(data.toString());
+
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
     // 상품 상세 조회
-    @GetMapping("/goods/{id}")
-    public Goods findGoods(@PathVariable String id) {
-        return goodsService.findGoods(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Goods>> findGoods(@PathVariable long id) {
+        Goods data = goodsService.findGoods(id);
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
     // 상품 등록
-    @PostMapping("/goods")
-    public String addGoods(@RequestBody Goods goods) {
-        String result = "상품 추가에 성공하였습니다.";
-
-        try {
-            goodsService.addGoods(goods);
-        } catch(Exception e) {
-            result = "상품 추가에 실패하였습니다.";
-            e.printStackTrace();
-        }
-
-        return result;
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse<Void>> addGoods(@RequestBody Goods goods) {
+        goodsService.addGoods(goods);
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), "상품 추가에 성공하였습니다."));
     }
 
     // 상품 수정
-    @PatchMapping("/goods")
-    public String modifyGoods(@RequestBody Goods goods) {
-        String result = "상품 수정에 성공하였습니다.";
-
-        try {
-            goodsService.modifyGoods(goods);
-        } catch(Exception e) {
-            result = "상품 수정에 실패하였습니다.";
-            e.printStackTrace();
-        }
-
-        return result;
+    @PatchMapping("/modify")
+    public ResponseEntity<ApiResponse<Void>> modifyGoods(@RequestBody Goods goods) {
+        goodsService.modifyGoods(goods);
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), "상품 수정에 성공하였습니다."));
     }
 
     // 상품 삭제
-    @DeleteMapping("/goods/{goodsId}")
-    public String removeGoods(@PathVariable String goodsId) {
-        String result = "상품 삭제에 성공하였습니다.";
-
-        try {
-            goodsService.removeGoods(goodsId);
-        } catch(Exception e) {
-            result = "상품 삭제에 실패하였습니다.";
-            e.printStackTrace();
-        }
-
-        return result;
+    @DeleteMapping("/remove")
+    public ResponseEntity<ApiResponse<Void>> removeGoods(@RequestBody Goods goods) {
+        goodsService.removeGoods(goods);
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), "상품 삭제에 성공하였습니다."));
     }
 
-    /**
-     * 좌석 가격 조회
-     * @param goodsId 상품 id
-     * @return
-     */
-    @GetMapping("/goods/zone/{goodsId}")
-    public List<Zone> zonePrice(@PathVariable String goodsId) {
-        return goodsService.findZonePrice(goodsId);
+    // 좌석 가격 조회
+    @GetMapping("/zone/price/{id}")
+    public ResponseEntity<ApiResponse<List<Zone>>> zonePrice(@PathVariable long id) {
+        List<Zone> data = goodsService.findZonePrice(id);
+        return ResponseEntity.ok(ApiResponse.ok(data));
     }
 }

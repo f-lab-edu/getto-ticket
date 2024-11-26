@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Zone {
-    private String id;
+    private long id;
     private String grade;
     private String name;
     private int price;
