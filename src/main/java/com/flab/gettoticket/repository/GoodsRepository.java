@@ -8,8 +8,8 @@ import java.util.List;
 public interface GoodsRepository {
     List<Goods> selectGoodsList(int limit, long offset);
     Goods selectGoods(long id);
-    void insertGoods(Goods goods);
-    void updateGoods(Goods goods);
-    void deleteGoods(long id);
+    int insertGoods(Goods goods);
+    int updateGoods(Goods goods);
+    int deleteGoods(long id);
     List<Zone> selectZonePrice(long id);
 }

@@ -73,7 +73,7 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
 
     @Transactional
     @Override
-    public void insertGoods(Goods goods) {
+    public int insertGoods(Goods goods) {
         String sqlForSequence = "SELECT NEXTVAL(goods_seq) FROM DUAL";
 
         String sql = """
@@ -100,11 +100,11 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         long genreId = goods.getGenreId();
         long placeId = goods.getPlaceId();
 
-        jdbcTemplate.update(sql, id, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId);
+        return jdbcTemplate.update(sql, id, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId);
     }
 
     @Override
-    public void updateGoods(Goods goods) {
+    public int updateGoods(Goods goods) {
         String sql = """
                     UPDATE goods SET 
                         title=?
@@ -126,14 +126,14 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         long genreId = goods.getGenreId();
         long placeId = goods.getPlaceId();
 
-        jdbcTemplate.update(sql, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId, id);
+        return jdbcTemplate.update(sql, title, desc, performanceStartDate, performanceEndDate, performanceTime, genreId, placeId, id);
     }
 
     @Override
-    public void deleteGoods(long id) {
+    public int deleteGoods(long id) {
         String sql = "DELETE FROM goods WHERE id=?";
 
-        jdbcTemplate.update(sql, id);
+        return jdbcTemplate.update(sql, id);
     }
 
     @Override
