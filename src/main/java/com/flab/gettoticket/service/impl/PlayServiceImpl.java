@@ -59,7 +59,6 @@ public class PlayServiceImpl implements PlayService {
 
     @Override
     public SeatDTO findSeatDTO(long goodsId, LocalDate playAt) {
-        SeatDTO seatDateDto = new SeatDTO();
         List<PlayTime> timeTableList = new ArrayList<>();
         List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
 
@@ -71,13 +70,10 @@ public class PlayServiceImpl implements PlayService {
                 seatCountDTOList = findSeatCount(playTimeId);
             }
 
-            seatDateDto.setTimeTableList(timeTableList);
-            seatDateDto.setSeatCountList(seatCountDTOList);
+            return new SeatDTO(timeTableList, seatCountDTOList);
         } catch(Exception e) {
             log.error("첫번째 회차의 구역별 잔여 좌석 개수 조회 중 예외 발생 goodsId: {} and playAt: {}. Error: {}", goodsId, playAt, e.getMessage(), e);
             throw new RuntimeException("구역별 잔여 좌석 개수 조회에 실패했습니다.", e);
         }
-
-        return seatDateDto;
     }
 }
