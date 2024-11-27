@@ -8,9 +8,13 @@ import lombok.ToString;
 import java.util.List;
 
 @Getter
-@Setter
 @ToString
 public class SeatDTO {
     private List<PlayTime> timeTableList;
     private List<SeatCountDTO> seatCountList;
+
+    public SeatDTO(List<PlayTime> timeTableList, List<SeatCountDTO> seatCountList) {
+        this.timeTableList = timeTableList;
+        this.seatCountList = seatCountList;
+    }
 }

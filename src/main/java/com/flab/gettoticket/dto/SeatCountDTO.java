@@ -5,10 +5,15 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
 public class SeatCountDTO {
     private String grade;
     private String zoneName;
     private int count;
+
+    public SeatCountDTO(String grade, String zoneName, int count) {
+        this.grade = grade;
+        this.zoneName = zoneName;
+        this.count = count;
+    }
 }
