@@ -22,8 +22,8 @@ public class PlayServiceImpl implements PlayService {
     }
 
     @Override
-    public List<LocalDate> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> list = new ArrayList<>();
+    public List<String> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
+        List<String> list = new ArrayList<>();
         try {
             list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
         } catch (Exception e) {
