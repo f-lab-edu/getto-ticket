@@ -2,6 +2,7 @@ package com.flab.gettoticket.controller;
 
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.dto.SeatDTO;
+import com.flab.gettoticket.handler.GlobalExceptionHandler;
 import com.flab.gettoticket.model.PlayTime;
 import com.flab.gettoticket.service.PlayService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -25,6 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +43,9 @@ class PlayControllerTest {
 
     @BeforeEach
     void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(playController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(playController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -48,10 +53,10 @@ class PlayControllerTest {
     void playAtList() throws Exception {
         //given
         long goodsId = 1L;
-        LocalDate startDate = LocalDate.parse("20241130", formatter);
+        LocalDate startDate = LocalDate.parse("20241201", formatter);
         LocalDate endDate = LocalDate.parse("20241203", formatter);
 
-        doReturn(Arrays.asList("20241201", "20241203"))
+        doReturn(Arrays.asList("2024-12-01", "2024-12-03"))
                 .when(playService).findPlayAtList(goodsId, startDate, endDate);
 
         //when
@@ -65,9 +70,9 @@ class PlayControllerTest {
         //then
         MvcResult mvcResult = resultActions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0]").value("2024-12-01"))
+                .andExpect(jsonPath("$.data[1]").value("2024-12-03"))
                 .andReturn();
-
-        System.out.println("mvcResult :: " + mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -78,7 +83,7 @@ class PlayControllerTest {
 
         doReturn(Arrays.asList(
                 new SeatCountDTO("1", "VIP", 3),
-                new SeatCountDTO("1", "VIP", 3)
+                new SeatCountDTO("2", "S", 4)
         )).when(playService).findSeatCount(playTimeId);
 
         //when
@@ -89,9 +94,13 @@ class PlayControllerTest {
         //then
         MvcResult mvcResult = resultActions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].grade").value("1"))
+                .andExpect(jsonPath("$.data[0].zoneName").value("VIP"))
+                .andExpect(jsonPath("$.data[0].count").value(3))
+                .andExpect(jsonPath("$.data[1].grade").value("2"))
+                .andExpect(jsonPath("$.data[1].zoneName").value("S"))
+                .andExpect(jsonPath("$.data[1].count").value(4))
                 .andReturn();
-
-        System.out.println("mvcResult :: " + mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -104,7 +113,7 @@ class PlayControllerTest {
         SeatDTO seatDTO = new SeatDTO(
                 Arrays.asList(
                         new PlayTime(playAt, 1, 1600, 1),
-                        new PlayTime(playAt, 1, 1600, 1)
+                        new PlayTime(playAt, 2, 1900, 1)
                 ),
                 Arrays.asList(
                         new SeatCountDTO("1", "VIP", 3),
@@ -119,14 +128,16 @@ class PlayControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/play-time/order/first")
                         .param("goodsId", String.valueOf(goodsId))
-                        .param("playAt", String.valueOf(playAt))
+                        .param("playAt", playAt.format(DateTimeFormatter.ofPattern("yyyyMMdd")))
                         .contentType(MediaType.APPLICATION_JSON));
 
         //then
         MvcResult mvcResult = resultActions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.timeTableList[0].playOrder").value(1))
+                .andExpect(jsonPath("$.data.seatCountList[0].grade").value("1"))
+                .andExpect(jsonPath("$.data.seatCountList[0].zoneName").value("VIP"))
+                .andExpect(jsonPath("$.data.seatCountList[0].count").value(3))
                 .andReturn();
-
-        System.out.println("mvcResult :: " + mvcResult.getResponse().getContentAsString());
     }
 }

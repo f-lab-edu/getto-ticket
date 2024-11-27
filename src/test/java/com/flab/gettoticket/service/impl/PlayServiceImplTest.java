@@ -39,21 +39,14 @@ class PlayServiceImplTest {
         LocalDate endDate = LocalDate.parse("20241203", formatter);
 
         when(playRepository.selectPlayAtList(goodsId, startDate, endDate))
-                .thenReturn(Arrays.asList(
-                        LocalDate.parse("2024-11-30"),
-                        LocalDate.parse("2024-12-01"),
-                        LocalDate.parse("2024-12-03")
-                ));
+                .thenReturn(Arrays.asList("2024-11-30", "2024-12-01", "2024-12-03"));
 
         //when
-        List<LocalDate> list = playServiceImpl.findPlayAtList(goodsId, startDate, endDate);
+        List<String> list = playServiceImpl.findPlayAtList(goodsId, startDate, endDate);
 
         //then
-        assertThat(list).containsExactly(
-                LocalDate.parse("2024-11-30"),
-                LocalDate.parse("2024-12-01"),
-                LocalDate.parse("2024-12-03")
-        );
+        assertThat(list).containsExactly("2024-11-30", "2024-12-01", "2024-12-03");
+
     }
 
     @Test

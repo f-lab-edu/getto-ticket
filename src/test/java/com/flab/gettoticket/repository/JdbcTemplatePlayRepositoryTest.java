@@ -35,7 +35,7 @@ class JdbcTemplatePlayRepositoryTest {
         when(playRepository.selectPlayAtList(goodsId, startDate, endDate))
                 .thenReturn(Collections.emptyList());
 
-        List<LocalDate> list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
+        List<String> list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
 
         //then
         assertThat(list).isEmpty();

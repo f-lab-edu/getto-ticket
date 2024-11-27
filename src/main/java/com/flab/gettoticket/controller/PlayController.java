@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/play-time")
@@ -30,12 +32,12 @@ public class PlayController {
      * @return List
      */
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<LocalDate>>> playAtList(
+    public ResponseEntity<ApiResponse<List<String>>> playAtList(
             @RequestParam long goodsId
             , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate startDate
             , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate endDate
     ) {
-        List<LocalDate> data = playService.findPlayAtList(goodsId, startDate, endDate);
+        List<String> data = playService.findPlayAtList(goodsId, startDate, endDate);
         return ResponseEntity.ok(ApiResponse.ok(data));
     }
 

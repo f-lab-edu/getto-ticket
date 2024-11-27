@@ -18,7 +18,7 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
     }
 
     @Override
-    public List<LocalDate> selectPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
+    public List<String> selectPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
         String sql = """
                     SELECT play_at FROM play_time
                     WHERE goods_id = ? AND play_at BETWEEN ? AND ?
@@ -26,7 +26,7 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
                     ORDER BY play_at
                     """;
 
-        List<LocalDate> list = jdbcTemplate.query(sql, playAtRowMapper(), goodsId, startDate, endDate);
+        List<String> list = jdbcTemplate.query(sql, playAtRowMapper(), goodsId, startDate, endDate);
 
         return list;
     }
@@ -61,9 +61,9 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
         return list;
     }
 
-    private RowMapper<LocalDate> playAtRowMapper() {
+    private RowMapper<String> playAtRowMapper() {
         return ((rs, rowNum) -> {
-            return rs.getDate("play_at").toLocalDate();
+            return String.valueOf(rs.getDate("play_at").toLocalDate());
         });
     }
 

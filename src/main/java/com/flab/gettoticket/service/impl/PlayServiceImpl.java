@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -22,8 +24,8 @@ public class PlayServiceImpl implements PlayService {
     }
 
     @Override
-    public List<LocalDate> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> list = new ArrayList<>();
+    public List<String> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
+        List<String> list = new ArrayList<>();
         try {
             list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
         } catch (Exception e) {
