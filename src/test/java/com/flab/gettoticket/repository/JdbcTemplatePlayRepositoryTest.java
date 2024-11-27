@@ -10,9 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JdbcTemplatePlayRepositoryTest {
@@ -30,10 +32,13 @@ class JdbcTemplatePlayRepositoryTest {
         LocalDate endDate = LocalDate.parse("20241203", formatter);
 
         //when
+        when(playRepository.selectPlayAtList(goodsId, startDate, endDate))
+                .thenReturn(Collections.emptyList());
+
         List<LocalDate> list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
 
         //then
-        assertThat(list.size()).isEqualTo(0);
+        assertThat(list).isEmpty();
     }
 
     @Test
@@ -44,10 +49,13 @@ class JdbcTemplatePlayRepositoryTest {
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
         //when
+        when(playRepository.selectTimeTable(goodsId, playAt))
+                .thenReturn(Collections.emptyList());
+
         List<PlayTime> list = playRepository.selectTimeTable(goodsId, playAt);
 
         //then
-        assertThat(list.size()).isEqualTo(0);
+        assertThat(list).isEmpty();
     }
 
     @Test
@@ -57,9 +65,12 @@ class JdbcTemplatePlayRepositoryTest {
         long playTimeId = 1;
 
         //when
+        when(playRepository.selectSeatCount(playTimeId))
+                .thenReturn(Collections.emptyList());
+
         List<SeatCountDTO> list = playRepository.selectSeatCount(playTimeId);
 
         //then
-        assertThat(list.size()).isEqualTo(0);
+        assertThat(list).isEmpty();
     }
 }

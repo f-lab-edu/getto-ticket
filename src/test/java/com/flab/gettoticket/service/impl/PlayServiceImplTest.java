@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PlayServiceImplTest {
@@ -37,14 +38,22 @@ class PlayServiceImplTest {
         LocalDate startDate = LocalDate.parse("20241130", formatter);
         LocalDate endDate = LocalDate.parse("20241203", formatter);
 
-        doReturn(Arrays.asList(new String[]{"2024-11-30", "2024-12-01", "2024-12-03"}))
-                .when(playRepository).selectPlayAtList(goodsId, startDate, endDate);
+        when(playRepository.selectPlayAtList(goodsId, startDate, endDate))
+                .thenReturn(Arrays.asList(
+                        LocalDate.parse("2024-11-30"),
+                        LocalDate.parse("2024-12-01"),
+                        LocalDate.parse("2024-12-03")
+                ));
 
         //when
         List<LocalDate> list = playServiceImpl.findPlayAtList(goodsId, startDate, endDate);
 
         //then
-        assertThat(list.size()).isEqualTo(3);
+        assertThat(list).containsExactly(
+                LocalDate.parse("2024-11-30"),
+                LocalDate.parse("2024-12-01"),
+                LocalDate.parse("2024-12-03")
+        );
     }
 
     @Test
@@ -54,16 +63,17 @@ class PlayServiceImplTest {
         long goodsId = 1L;
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
-        doReturn(Arrays.asList(
-                new PlayTime(playAt, 1, 1600, 1),
-                new PlayTime(playAt, 1, 1600, 1)
-        )).when(playRepository).selectTimeTable(goodsId, playAt);
+        when(playRepository.selectTimeTable(goodsId, playAt))
+                .thenReturn(Arrays.asList(
+                        new PlayTime(playAt, 1, 1600, 1),
+                        new PlayTime(playAt, 1, 1600, 1)
+                ));
 
         //when
         List<PlayTime> list = playServiceImpl.findPlayOrder(goodsId, playAt);
 
         //then
-        assertThat(list.size()).isEqualTo(2);
+        assertThat(list).hasSize(2);
     }
 
     @Test
@@ -72,16 +82,17 @@ class PlayServiceImplTest {
         //given
         long playTimeId = 1L;
 
-        doReturn(Arrays.asList(
-                new SeatCountDTO("1", "VIP", 3),
-                new SeatCountDTO("2", "S", 4)
-        )).when(playRepository).selectSeatCount(playTimeId);
+        when(playRepository.selectSeatCount(playTimeId))
+                .thenReturn(Arrays.asList(
+                        new SeatCountDTO("1", "VIP", 3),
+                        new SeatCountDTO("2", "S", 4)
+                ));
 
         //when
         List<SeatCountDTO> list = playServiceImpl.findSeatCount(playTimeId);
 
         //then
-        assertThat(list.size()).isEqualTo(2);
+        assertThat(list).hasSize(2);
     }
 
     @Test
@@ -90,23 +101,22 @@ class PlayServiceImplTest {
         long goodsId = 1L;
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
-        doReturn(Arrays.asList(
-                new PlayTime(playAt, 1, 1600, 1),
-                new PlayTime(playAt, 1, 1600, 1)
-        )).when(playRepository).selectTimeTable(goodsId, playAt);
-
-        long playTimeId = 1L;
-
-        doReturn(Arrays.asList(
-                new SeatCountDTO("1", "VIP", 3),
-                new SeatCountDTO("2", "S", 4)
-        )).when(playRepository).selectSeatCount(playTimeId);
+        when(playRepository.selectTimeTable(goodsId, playAt))
+                .thenReturn(Arrays.asList(
+                        new PlayTime(playAt, 1, 1600, 1),
+                        new PlayTime(playAt, 1, 1600, 1)
+                ));
+        when(playRepository.selectSeatCount(1L))
+                .thenReturn(Arrays.asList(
+                        new SeatCountDTO("1", "VIP", 3),
+                        new SeatCountDTO("2", "S", 4)
+                ));
 
         //when
         SeatDTO dto = playServiceImpl.findSeatDTO(goodsId, playAt);
 
         //then
-        assertThat(dto.getTimeTableList().size()).isEqualTo(2);
-        assertThat(dto.getSeatCountList().size()).isEqualTo(2);
+        assertThat(dto.getTimeTableList()).hasSize(2);
+        assertThat(dto.getSeatCountList()).hasSize(2);
     }
 }
