@@ -34,7 +34,7 @@ public class GoodsServiceImpl implements GoodsService {
             list = goodsRepository.selectGoodsList(limit, offset);
         } catch (Exception e) {
             log.error("상품 조회 중 예외 발생 limit: {}, offset: {}, Error: {}", limit, offset, e.getMessage(), e);
-            throw new RuntimeException("", e);
+            throw new RuntimeException("상품 조회에 실패했습니다.", e);
         }
 
         return list;
@@ -57,7 +57,7 @@ public class GoodsServiceImpl implements GoodsService {
         try {
             goodsRepository.insertGoods(goods);
         } catch (Exception e) {
-            log.error("상품 등록 중 예외 발생 goods: {} Error: {}", goods, e.getMessage(), e);
+            log.error("상품 등록 중 예외 발생 goods: {}, Error: {}", goods, e.getMessage(), e);
             throw new RuntimeException("상품 등록에 실패했습니다.", e);
         }
     }

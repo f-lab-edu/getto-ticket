@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -93,8 +94,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         long id = Integer.valueOf(goodsSeq);
         String title = goods.getTitle();
         String desc = goods.getDesc();
-        String performanceStartDate = goods.getPerformanceStartDate();
-        String performanceEndDate = goods.getPerformanceEndDate();
+        LocalDate performanceStartDate = goods.getPerformanceStartDate();
+        LocalDate performanceEndDate = goods.getPerformanceEndDate();
         String performanceTime = goods.getPerformanceTime();
         long genreId = goods.getGenreId();
         long placeId = goods.getPlaceId();
@@ -119,8 +120,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         long id = goods.getId();
         String title = goods.getTitle();
         String desc = goods.getDesc();
-        String performanceStartDate = goods.getPerformanceStartDate();
-        String performanceEndDate = goods.getPerformanceEndDate();
+        LocalDate performanceStartDate = goods.getPerformanceStartDate();
+        LocalDate performanceEndDate = goods.getPerformanceEndDate();
         String performanceTime = goods.getPerformanceTime();
         long genreId = goods.getGenreId();
         long placeId = goods.getPlaceId();
@@ -163,8 +164,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
             goods.setLocation(rs.getString("location"));
             goods.setX(rs.getString("x"));
             goods.setY(rs.getString("y"));
-            goods.setPerformanceStartDate(rs.getString("performance_start_date"));
-            goods.setPerformanceEndDate(rs.getString("performance_end_date"));
+            goods.setPerformanceStartDate(rs.getDate("performance_start_date").toLocalDate());
+            goods.setPerformanceEndDate(rs.getDate("performance_end_date").toLocalDate());
             goods.setPerformanceTime(rs.getString("performance_time"));
             return goods;
         });
