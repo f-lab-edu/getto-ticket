@@ -26,6 +26,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.data:spring-data-commons:3.4.0'
 	implementation 'org.mindrot:jbcrypt:0.4'
 
 	//thymeleaf
@@ -42,6 +43,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
+	systemProperty 'spring.profiles.active', 'test'
 }
