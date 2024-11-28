@@ -9,10 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -25,57 +24,53 @@ public class PlayServiceImpl implements PlayService {
 
     @Override
     public List<String> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
-        List<String> list = new ArrayList<>();
-        try {
-            list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
-        } catch (Exception e) {
-            log.error("공연일 리스트 조회 중 예외 발생 goodsId: {}. startDate: {}. endDate: {}. Error: {}", goodsId, startDate, endDate, e.getMessage(), e);
-            throw new RuntimeException("공연일 리스트 조회에 실패했습니다.", e);
+        List<String> list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
+
+        if(Objects.isNull(list)) {
+            log.error("공연일 리스트 조회 중 예외 발생 goodsId: {}, startDate: {}, endDate: {}", goodsId, startDate, endDate);
+            throw new RuntimeException("공연일 리스트 조회에 실패했습니다.");
         }
+
         return list;
     }
 
     @Override
     public List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt) {
-        List<PlayTime> list = new ArrayList<>();
-        try {
-            list = playRepository.selectTimeTable(goodsId, playAt);
-        } catch (Exception e) {
-            log.error("공연 회차 순서 리스트 조회 중 예외 발생 goodsId: {}. playAt: {}. Error: {}", goodsId, playAt, e.getMessage(), e);
-            throw new RuntimeException("공연 회차 순서 리스트 조회에 실패했습니다.", e);
+        List<PlayTime> list = playRepository.selectTimeTable(goodsId, playAt);
+
+        if(Objects.isNull(list)) {
+            log.error("공연 회차 순서 리스트 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
+            throw new RuntimeException("공연 회차 순서 리스트 조회에 실패했습니다.");
         }
+
         return list;
     }
 
     @Override
     public List<SeatCountDTO> findSeatCount(long playTimeId) {
-        List<SeatCountDTO> list = new ArrayList<>();
-        try {
-            list = playRepository.selectSeatCount(playTimeId);
-        } catch (Exception e) {
-            log.error("n회차의 구역별 잔여 좌석 개수 playTimeId: {}, Error: {}", playTimeId, e.getMessage(), e);
-            throw new RuntimeException("n회차의 구역별 잔여 좌석 개수 조회에 실패했습니다.", e);
+        List<SeatCountDTO> list = playRepository.selectSeatCount(playTimeId);
+
+        if(Objects.isNull(list)) {
+            log.error("회차별 구역 잔여 좌석 개수 playTimeId: {}", playTimeId);
+            throw new RuntimeException("회차별 구역 잔여 좌석 개수 조회에 실패했습니다.");
         }
+
         return list;
     }
 
     @Override
     public SeatDTO findSeatDTO(long goodsId, LocalDate playAt) {
-        List<PlayTime> timeTableList = new ArrayList<>();
+        List<PlayTime> timeTableList = findPlayOrder(goodsId, playAt);
         List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
 
-        try {
-            timeTableList = findPlayOrder(goodsId, playAt);
-
-            if(!timeTableList.isEmpty()) {
-                long playTimeId = timeTableList.get(0).getPlayTimeId();
-                seatCountDTOList = findSeatCount(playTimeId);
-            }
-
-            return new SeatDTO(timeTableList, seatCountDTOList);
-        } catch(Exception e) {
-            log.error("첫번째 회차의 구역별 잔여 좌석 개수 조회 중 예외 발생 goodsId: {} and playAt: {}. Error: {}", goodsId, playAt, e.getMessage(), e);
-            throw new RuntimeException("구역별 잔여 좌석 개수 조회에 실패했습니다.", e);
+        if(Objects.isNull(timeTableList)) {
+            log.error("첫번째 회차의 구역별 잔여 좌석 개수 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
+            throw new RuntimeException("구역별 잔여 좌석 개수 조회에 실패했습니다.");
         }
+
+        long playTimeId = timeTableList.get(0).getPlayTimeId();
+        seatCountDTOList = findSeatCount(playTimeId);
+
+        return new SeatDTO(timeTableList, seatCountDTOList);
     }
 }

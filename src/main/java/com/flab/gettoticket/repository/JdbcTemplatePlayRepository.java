@@ -81,10 +81,10 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
     private RowMapper<SeatCountDTO> seatCountRowMapper() {
         return ((rs, rowNum) -> {
             String grade = rs.getString("grade");
-            String name = rs.getString("name");
+            String zoneName = rs.getString("name");
             int count = rs.getInt("count");
 
-            return new SeatCountDTO(grade, name, count);
+            return new SeatCountDTO(grade, zoneName, count);
         });
     }
 }
