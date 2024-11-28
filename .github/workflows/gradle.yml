@@ -61,14 +61,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Run Tests with Gradle
-      run: ./gradlew build -Dspring.datasource.url=$DB_URL -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD
-      env:
-        DB_URL: ${{ secrets.DB_URL }}
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    - name: Set YML
+      run: |
+        mkdir -p src/main/resources
+        cd /src/main/resources
+        echo "${{ secrets.APPLICATION_DB_YML }}" | base64 --decode > src/main/resources/application-db.yml
 
-      # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
+    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
