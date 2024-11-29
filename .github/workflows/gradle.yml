@@ -66,7 +66,7 @@ jobs:
             mv /home/getto-ticket/tobe/project.jar /home/getto-ticket/current/project.jar
             cd /home/getto-ticket/current
             sudo fuser -k -n tcp 8080 || true
-            nohup java -jar proejct.jar > ./output.log 2>&1 &
+            nohup java -jar project.jar > ./output.log 2>&1 &
             rm -rf /home/getto-ticket/tobe
 
   dependency-submission:
