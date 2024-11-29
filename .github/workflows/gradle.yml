@@ -39,34 +39,34 @@ jobs:
       - name: Gradle Build
         run: ./gradlew build
 
-#      - name: 빌드된 파일 이름변경하기
-#        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
-#
-#      - name: SCP로 ncloud server에 빌드된 파일 전송하기
-#        uses: appleboy/scp-action@v0.1.7
-#        with:
-#          host: ${{ secrets.NCLOUD_HOST }}
-#          username: ${{ secrets.NCLOUD_USERNAME }}
-#          key: ${{ secrets.NCLOUD_KEY }}
-#          source: project.jar
-#          target: /home/ubuntu/getto-ticket/tobe
-#
-#      - name: SSH로 ncloud server에 접속하기
-#        uses: appleboy/ssh-action@v1.2.0
-#        with:
-#          host: ${{ secrets.NCLOUD_HOST }}
-#          username: ${{ secrets.NCLOUD_USERNAME }}
-#          password: ${{ secrets.NCLOUD_PASSWORD }}
-#          key: ${{ secrets.NCLOUD_KEY }}
-#          script_stop: true
-#          script: |
-#            rm -rf /home/ubuntu/getto-ticket/current
-#            mkdir /home/ubuntu/getto-ticket/current
-#            mv /home/ubuntu/getto-ticket/tobe/project.jar /home/ubuntu/getto-ticket/current/project.jar
-#            cd /home/ubuntu/getto-ticket/current
-#            sudo fuser -k -n tcp 8080 || true
-#            nohup java -jar proejct.jar > ./output.log 2>&1 &
-#            rm -rf /home/ubuntu/getto-ticket/tobe
+      - name: 빌드된 파일 이름변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
+
+      - name: SCP로 ncloud server에 빌드된 파일 전송하기
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.NCLOUD_HOST }}
+          username: ${{ secrets.NCLOUD_USERNAME }}
+          key: ${{ secrets.NCLOUD_KEY }}
+          source: project.jar
+          target: /home/getto-ticket/tobe
+
+      - name: SSH로 ncloud server에 접속하기
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.NCLOUD_HOST }}
+          username: ${{ secrets.NCLOUD_USERNAME }}
+          password: ${{ secrets.NCLOUD_PASSWORD }}
+          key: ${{ secrets.NCLOUD_KEY }}
+          script_stop: true
+          script: |
+            rm -rf /home/getto-ticket/current
+            mkdir /home/getto-ticket/current
+            mv /home/getto-ticket/tobe/project.jar /home/getto-ticket/current/project.jar
+            cd /home/getto-ticket/current
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -jar proejct.jar > ./output.log 2>&1 &
+            rm -rf /home/getto-ticket/tobe
 
   dependency-submission:
 
