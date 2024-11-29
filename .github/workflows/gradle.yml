@@ -46,18 +46,19 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.NCLOUD_HOST }}
+          port: ${{ secrets.NCLOUD_PORT }}
           username: ${{ secrets.NCLOUD_USERNAME }}
-          key: ${{ secrets.NCLOUD_KEY }}
+          password: ${{ secrets.NCLOUD_PASSWORD }}
           source: project.jar
           target: /home/getto-ticket/tobe
 
       - name: SSH로 ncloud server에 접속하기
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.NCLOUD_HOST }}
+          port: ${{ secrets.NCLOUD_PORT }}
           username: ${{ secrets.NCLOUD_USERNAME }}
           password: ${{ secrets.NCLOUD_PASSWORD }}
-          key: ${{ secrets.NCLOUD_KEY }}
           script_stop: true
           script: |
             rm -rf /home/getto-ticket/current
