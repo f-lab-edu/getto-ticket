@@ -1,14 +1,14 @@
 package com.flab.gettoticket.service.impl;
 
-import com.flab.gettoticket.model.Goods;
-import com.flab.gettoticket.model.Zone;
+import com.flab.gettoticket.entity.Goods;
+import com.flab.gettoticket.entity.Zone;
 import com.flab.gettoticket.repository.GoodsRepository;
 import com.flab.gettoticket.service.GoodsService;
+import com.flab.gettoticket.util.PageRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +24,8 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public List<Goods> findGoodsList(Pageable pageable) {
-        int limit = pageable.getPageSize();
-        long offset = pageable.getOffset();
+        int limit = PageRequestUtil.getLimit(pageable);
+        long offset = PageRequestUtil.getOffset(pageable);
 
         List<Goods> list = goodsRepository.selectGoodsList(limit, offset);
 
