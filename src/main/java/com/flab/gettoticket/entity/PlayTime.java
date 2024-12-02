@@ -1,7 +1,6 @@
-package com.flab.gettoticket.model;
+package com.flab.gettoticket.entity;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
