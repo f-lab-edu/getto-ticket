@@ -62,6 +62,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
                     , b.name AS location
                     , b.x
                     , b.y 
+                    , c.id AS genre_id
+                    , b.id AS place_id
                 FROM goods a
                 LEFT JOIN place b ON a.place_id = b.id 
                 LEFT JOIN genre c ON a.genre_id = c.id
@@ -168,8 +170,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
             String location = rs.getString("location");
             String x = rs.getString("x");
             String y = rs.getString("y");
-            long genreId = rs.getLong("genreId");
-            long placeId = rs.getLong("placeId");
+            long genreId = rs.getLong("genre_id");
+            long placeId = rs.getLong("place_id");
 
             return new Goods(id, genreName, title, desc, performanceStartDate, performanceEndDate, performanceTime, location, x, y, genreId, placeId);
         });
