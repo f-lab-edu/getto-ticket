@@ -1,7 +1,7 @@
 package com.flab.gettoticket.repository;
 
 import com.flab.gettoticket.dto.SeatCountDTO;
-import com.flab.gettoticket.model.PlayTime;
+import com.flab.gettoticket.entity.PlayTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

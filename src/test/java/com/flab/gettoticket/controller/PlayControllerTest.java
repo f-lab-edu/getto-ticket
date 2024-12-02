@@ -3,7 +3,7 @@ package com.flab.gettoticket.controller;
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.dto.SeatDTO;
 import com.flab.gettoticket.handler.GlobalExceptionHandler;
-import com.flab.gettoticket.model.PlayTime;
+import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.service.PlayService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,16 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
