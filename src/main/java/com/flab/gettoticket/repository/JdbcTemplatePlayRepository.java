@@ -1,7 +1,7 @@
 package com.flab.gettoticket.repository;
 
 import com.flab.gettoticket.dto.SeatCountDTO;
-import com.flab.gettoticket.model.PlayTime;
+import com.flab.gettoticket.entity.PlayTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -69,12 +69,12 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
 
     private RowMapper<PlayTime> timeTableRowMapper() {
         return ((rs, rowNum) -> {
-            PlayTime playTime = new PlayTime();
-            playTime.setPlayAt(rs.getDate("play_at").toLocalDate());
-            playTime.setPlayOrder(rs.getInt("play_order"));
-            playTime.setPlayTime(rs.getInt("play_time"));
-            playTime.setPlayTimeId(rs.getLong("id"));
-            return playTime;
+            LocalDate playAt = rs.getDate("play_at").toLocalDate();
+            int playOrder = rs.getInt("play_order");
+            int playTime = rs.getInt("play_time");
+            long playTimeId = rs.getLong("id");
+
+            return new PlayTime(playAt, playOrder, playTime, playTimeId);
         });
     }
 

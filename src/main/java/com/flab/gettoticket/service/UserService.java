@@ -1,10 +1,9 @@
 package com.flab.gettoticket.service;
 
 import com.flab.gettoticket.common.ApiResponse;
-import com.flab.gettoticket.dto.LogoutRequest;
 import com.flab.gettoticket.dto.SigninRequest;
 import com.flab.gettoticket.dto.SignupReqeust;
-import com.flab.gettoticket.model.Users;
+import com.flab.gettoticket.entity.Users;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserService {

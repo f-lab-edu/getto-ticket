@@ -2,8 +2,8 @@ package com.flab.gettoticket.controller;
 
 import com.flab.gettoticket.common.ApiResponse;
 import com.flab.gettoticket.common.ApiResponseCode;
-import com.flab.gettoticket.model.Goods;
-import com.flab.gettoticket.model.Zone;
+import com.flab.gettoticket.entity.Goods;
+import com.flab.gettoticket.entity.Zone;
 import com.flab.gettoticket.service.GoodsService;
 import com.flab.gettoticket.util.PageRequestUtil;
 import lombok.extern.slf4j.Slf4j;

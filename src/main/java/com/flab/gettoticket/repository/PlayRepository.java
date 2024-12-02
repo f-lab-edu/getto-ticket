@@ -1,7 +1,7 @@
 package com.flab.gettoticket.repository;
 
 import com.flab.gettoticket.dto.SeatCountDTO;
-import com.flab.gettoticket.model.PlayTime;
+import com.flab.gettoticket.entity.PlayTime;
 
 import java.time.LocalDate;
 import java.util.List;

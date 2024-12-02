@@ -1,7 +1,7 @@
 package com.flab.gettoticket.repository;
 
-import com.flab.gettoticket.model.Goods;
-import com.flab.gettoticket.model.Zone;
+import com.flab.gettoticket.entity.Goods;
+import com.flab.gettoticket.entity.Zone;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,6 +33,8 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
                        , b.name AS location
                        , b.x
                        , b.y
+                       , c.id AS genre_id
+                       , b.id AS place_id
                     FROM goods a
                     LEFT JOIN place b ON a.place_id = b.id
                     LEFT JOIN genre c ON a.genre_id = c.id
@@ -156,29 +158,31 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
 
     private RowMapper<Goods> goodsRowMapper() {
         return ((rs, rowNum) -> {
-            Goods goods = new Goods();
-            goods.setId(rs.getLong("id"));
-            goods.setGenreName(rs.getString("genre_name"));
-            goods.setTitle(rs.getString("title"));
-            goods.setDesc(rs.getString("desc"));
-            goods.setLocation(rs.getString("location"));
-            goods.setX(rs.getString("x"));
-            goods.setY(rs.getString("y"));
-            goods.setPerformanceStartDate(rs.getDate("performance_start_date").toLocalDate());
-            goods.setPerformanceEndDate(rs.getDate("performance_end_date").toLocalDate());
-            goods.setPerformanceTime(rs.getString("performance_time"));
-            return goods;
+            long id = rs.getLong("id");
+            String genreName = rs.getString("genre_name");
+            String title = rs.getString("title");
+            String desc = rs.getString("desc");
+            LocalDate performanceStartDate = rs.getDate("performance_start_date").toLocalDate();
+            LocalDate performanceEndDate = rs.getDate("performance_end_date").toLocalDate();
+            String performanceTime = rs.getString("performance_time");
+            String location = rs.getString("location");
+            String x = rs.getString("x");
+            String y = rs.getString("y");
+            long genreId = rs.getLong("genreId");
+            long placeId = rs.getLong("placeId");
+
+            return new Goods(id, genreName, title, desc, performanceStartDate, performanceEndDate, performanceTime, location, x, y, genreId, placeId);
         });
     }
 
     private RowMapper<Zone> zoneRowMapper() {
         return ((rs, rowNum) -> {
-            Zone zone = new Zone();
-            zone.setId(rs.getLong("id"));
-            zone.setGrade(rs.getString("grade"));
-            zone.setName(rs.getString("name"));
-            zone.setPrice(rs.getInt("price"));
-            return zone;
+            long id = rs.getLong("id");
+            String grade = rs.getString("grade");
+            String name = rs.getString("name");
+            int price = rs.getInt("price");
+
+            return new Zone(id, grade, name, price);
         });
     }
 }

@@ -14,6 +14,14 @@ public class PageRequestUtil {
         return PageRequest.of(page, size, sort);
     }
 
+    public static int getLimit(Pageable pageable) {
+        return pageable.getPageSize();
+    }
+
+    public static long getOffset(Pageable pageable) {
+        return pageable.getOffset();
+    }
+
     private static void validateSize(int size) {
         if (size >= Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Integer.MAX_VALUE 보다 큰 값은 허용하지 않습니다.");
