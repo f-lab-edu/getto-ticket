@@ -1,7 +1,7 @@
 package com.flab.gettoticket.repository;
 
 import com.flab.gettoticket.dto.SignupReqeust;
-import com.flab.gettoticket.model.Users;
+import com.flab.gettoticket.entity.Users;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

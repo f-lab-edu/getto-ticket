@@ -1,6 +1,6 @@
 package com.flab.gettoticket.interceptor;
 
-import com.flab.gettoticket.model.Users;
+import com.flab.gettoticket.entity.Users;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

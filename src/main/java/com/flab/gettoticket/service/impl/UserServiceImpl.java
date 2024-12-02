@@ -4,7 +4,7 @@ import com.flab.gettoticket.common.ApiResponse;
 import com.flab.gettoticket.common.BCryptEncoder;
 import com.flab.gettoticket.dto.SigninRequest;
 import com.flab.gettoticket.dto.SignupReqeust;
-import com.flab.gettoticket.model.Users;
+import com.flab.gettoticket.entity.Users;
 import com.flab.gettoticket.repository.UserRepository;
 import com.flab.gettoticket.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;

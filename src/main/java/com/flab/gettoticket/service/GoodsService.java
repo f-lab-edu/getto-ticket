@@ -1,7 +1,7 @@
 package com.flab.gettoticket.service;
 
-import com.flab.gettoticket.model.Goods;
-import com.flab.gettoticket.model.Zone;
+import com.flab.gettoticket.entity.Goods;
+import com.flab.gettoticket.entity.Zone;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
