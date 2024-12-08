@@ -32,7 +32,7 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
     }
 
     @Override
-    public List<PlayTime> selectTimeTable(long goodsId, LocalDate playAt) {
+    public List<PlayTime> selectTimeTableList(long goodsId, LocalDate playAt) {
         String sql = """
                     SELECT play_at, play_order, play_time, id FROM play_time
                     WHERE goods_id = ? AND play_at = ?
@@ -42,6 +42,19 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
         List<PlayTime> list = jdbcTemplate.query(sql, timeTableRowMapper(), goodsId, playAt);
 
         return list;
+    }
+
+    @Override
+    public PlayTime selectTimeTable(long playTimeId, long goodsId, LocalDate playAt) {
+        String sql = """
+                    SELECT play_at, play_order, play_time, id FROM play_time
+                    WHERE id = ? AND goods_id = ? AND play_at = ?
+                    ORDER BY play_order, play_time
+                    """;
+
+        List<PlayTime> list = jdbcTemplate.query(sql, timeTableRowMapper(), playTimeId, goodsId, playAt);
+
+        return list.get(0);
     }
 
     @Override

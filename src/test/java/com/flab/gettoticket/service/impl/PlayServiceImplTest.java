@@ -1,7 +1,7 @@
 package com.flab.gettoticket.service.impl;
 
+import com.flab.gettoticket.dto.PlayTimeDTO;
 import com.flab.gettoticket.dto.SeatCountDTO;
-import com.flab.gettoticket.dto.SeatDTO;
 import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.repository.PlayRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -50,16 +50,16 @@ class PlayServiceImplTest {
     }
 
     @Test
-    @DisplayName("yymmdd 공연일의 모든 공연 회차 오름차순 조회")
+    @DisplayName("특정 공연일의 회차 리스트 조회")
     void findPlayOrder() {
         //given
         long goodsId = 1L;
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
-        when(playRepository.selectTimeTable(goodsId, playAt))
+        when(playRepository.selectTimeTableList(goodsId, playAt))
                 .thenReturn(Arrays.asList(
                         new PlayTime(playAt, 1, 1600, 1),
-                        new PlayTime(playAt, 1, 1600, 1)
+                        new PlayTime(playAt, 2, 1800, 2)
                 ));
 
         //when
@@ -67,6 +67,30 @@ class PlayServiceImplTest {
 
         //then
         assertThat(list).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("특정 공연일 n회차 정보")
+    void findPlayTimeDTO() {
+        long playTimeId = 1L;
+        long goodsId = 1L;
+        LocalDate playAt = LocalDate.parse("20241130", formatter);
+
+        when(playRepository.selectTimeTable(playTimeId, goodsId, playAt))
+                .thenReturn(
+                        new PlayTime(playAt, 1, 1600, 1)
+                );
+        when(playRepository.selectSeatCount(1L))
+                .thenReturn(Arrays.asList(
+                        new SeatCountDTO("1", "VIP", 3),
+                        new SeatCountDTO("2", "S", 4)
+                ));
+
+        //when
+        PlayTimeDTO dto = playServiceImpl.findPlayTimeDTO(playTimeId, goodsId, playAt);
+
+        //then
+        assertThat(dto.getSeatCountList()).hasSize(2);
     }
 
     @Test
@@ -86,30 +110,5 @@ class PlayServiceImplTest {
 
         //then
         assertThat(list).hasSize(2);
-    }
-
-    @Test
-    @DisplayName("yymmdd 공연일의 첫번째 회차 잔여좌석 개수")
-    void findSeatDTO() {
-        long goodsId = 1L;
-        LocalDate playAt = LocalDate.parse("20241130", formatter);
-
-        when(playRepository.selectTimeTable(goodsId, playAt))
-                .thenReturn(Arrays.asList(
-                        new PlayTime(playAt, 1, 1600, 1),
-                        new PlayTime(playAt, 1, 1600, 1)
-                ));
-        when(playRepository.selectSeatCount(1L))
-                .thenReturn(Arrays.asList(
-                        new SeatCountDTO("1", "VIP", 3),
-                        new SeatCountDTO("2", "S", 4)
-                ));
-
-        //when
-        SeatDTO dto = playServiceImpl.findSeatDTO(goodsId, playAt);
-
-        //then
-        assertThat(dto.getTimeTableList()).hasSize(2);
-        assertThat(dto.getSeatCountList()).hasSize(2);
     }
 }

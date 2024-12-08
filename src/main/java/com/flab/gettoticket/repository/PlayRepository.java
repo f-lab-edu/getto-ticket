@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface PlayRepository {
     List<String> selectPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate);
-    List<PlayTime> selectTimeTable(long goodsId, LocalDate playAt);
+    List<PlayTime> selectTimeTableList(long goodsId, LocalDate playAt);
+    PlayTime selectTimeTable(long playTimeId, long goodsId, LocalDate playAt);
     List<SeatCountDTO> selectSeatCount(long playTimeId);
 }
