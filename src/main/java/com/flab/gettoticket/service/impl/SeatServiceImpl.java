@@ -1,6 +1,5 @@
 package com.flab.gettoticket.service.impl;
 
-import com.flab.gettoticket.entity.BookingSeat;
 import com.flab.gettoticket.entity.Seat;
 import com.flab.gettoticket.entity.Zone;
 import com.flab.gettoticket.repository.SeatRepository;
