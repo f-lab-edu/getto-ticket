@@ -79,16 +79,4 @@ public class GoodsServiceImpl implements GoodsService {
             throw new RuntimeException("상품 삭제에 실패했습니다.");
         }
     }
-
-    @Override
-    public List<Zone> findZonePrice(long id) {
-        List<Zone> list = goodsRepository.selectZonePrice(id);
-
-        if(Objects.isNull(list)) {
-            log.error("좌석 가격 조회 중 예외 발생 id: {}", id);
-            throw new RuntimeException("좌석 가격 조회에 실패하였습니다.");
-        }
-
-        return list;
-    }
 }

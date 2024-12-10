@@ -7,9 +7,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Zone {
+public class BookingSeat {
     private long id;
-    private String grade;
-    private String name;
-    private int price;
+    private String status;
+    private long bookingId;
+    private long seatId;
 }
