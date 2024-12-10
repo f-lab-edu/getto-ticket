@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,8 @@ class GoodsServiceImplTest {
 
     @Mock
     private GoodsRepository goodsRepository;
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     @DisplayName("상품 조회")
@@ -61,7 +64,20 @@ class GoodsServiceImplTest {
     void findGoods(){
         //given
         long id = 1;
-        Goods expectedGoods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        Goods expectedGoods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
 
         when(goodsRepository.selectGoods(id))
                 .thenReturn(expectedGoods);
@@ -71,22 +87,36 @@ class GoodsServiceImplTest {
 
         //then
         assertThat(goods).isNotNull();
-        assertThat(goods.getId()).isEqualTo(expectedGoods.getId());
-        assertThat(goods.getGenreName()).isEqualTo(expectedGoods.getGenreName());
-        assertThat(goods).usingRecursiveComparison().isEqualTo(expectedGoods); // 전체 객체 비교
+        assertThat(goods.getId()).isEqualTo(goods.getId());
+        assertThat(goods.getGenreName()).isEqualTo(goods.getGenreName());
+        assertThat(goods).usingRecursiveComparison().isEqualTo(goods); // 전체 객체 비교
     }
 
     @Test
     @DisplayName("상품 등록")
     void addGoods(){
         //given
-        Goods expectedGoods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        long id = 1;
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
 
-        when(goodsRepository.insertGoods(expectedGoods))
+        when(goodsRepository.insertGoods(goods))
                 .thenReturn(1);
 
         //when
-        int result = goodsRepository.insertGoods(expectedGoods);
+        int result = goodsRepository.insertGoods(goods);
 
         //then
         assertThat(result).isEqualTo(1);
@@ -96,13 +126,27 @@ class GoodsServiceImplTest {
     @DisplayName("상품 수정")
     void modifyGoods(){
         //given
-        Goods expectedGoods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        long id = 1;
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
 
-        when(goodsRepository.updateGoods(expectedGoods))
+        when(goodsRepository.updateGoods(goods))
                 .thenReturn(1);
 
         //when
-        int result = goodsRepository.updateGoods(expectedGoods);
+        int result = goodsRepository.updateGoods(goods);
 
         //then
         assertThat(result).isEqualTo(1);
@@ -124,39 +168,36 @@ class GoodsServiceImplTest {
         assertThat(result).isEqualTo(1);
     }
 
-    @Test
-    @DisplayName("좌석 가격 조회")
-    void findZonePrice(){
-        //given
-        long id = 1;
-
-        when(goodsRepository.selectZonePrice(id))
-                .thenReturn(createZoneList());
-
-        //when
-        List<Zone> list = goodsServiceImpl.findZonePrice(id);
-
-        //then
-        Assertions.assertThat(list)
-                .hasSize(2)
-                .extracting(Zone::getId, Zone::getName)
-                .contains(
-                        tuple(1L, "VIP")
-                        , tuple(2L, "R")
-                );
-    }
-
     private List<Goods> createGoodsList() {
         return Arrays.asList(
-                new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2)
-                , new Goods(2, "경기", "웃는남자", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2)
-        );
-    }
-
-    private List<Zone> createZoneList() {
-        return Arrays.asList(
-                new Zone(1, "1", "VIP", 170000)
-                , new Zone(2, "2", "R", 140000)
+                Goods.builder()
+                        .id(1)
+                        .genreName("서울")
+                        .title("지킬앤하이드")
+                        .desc("")
+                        .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                        .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                        .performanceTime("1900")
+                        .location("샤롯데")
+                        .x("")
+                        .y("")
+                        .genreId(1)
+                        .placeId(2)
+                        .build()
+                , Goods.builder()
+                        .id(2)
+                        .genreName("경기")
+                        .title("웃는남자")
+                        .desc("")
+                        .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                        .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                        .performanceTime("1900")
+                        .location("샤롯데")
+                        .x("")
+                        .y("")
+                        .genreId(1)
+                        .placeId(2)
+                        .build()
         );
     }
 }

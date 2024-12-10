@@ -12,5 +12,4 @@ public interface GoodsService {
     void addGoods(Goods goods);
     void modifyGoods(Goods goods);
     void removeGoods(Goods goods);
-    List<Zone> findZonePrice(long id);
 }

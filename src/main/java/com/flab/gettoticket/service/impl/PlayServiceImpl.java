@@ -1,6 +1,6 @@
 package com.flab.gettoticket.service.impl;
 
-import com.flab.gettoticket.dto.SeatDTO;
+import com.flab.gettoticket.dto.PlayTimeDTO;
 import com.flab.gettoticket.dto.SeatCountDTO;
 import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.repository.PlayRepository;
@@ -36,7 +36,7 @@ public class PlayServiceImpl implements PlayService {
 
     @Override
     public List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt) {
-        List<PlayTime> list = playRepository.selectTimeTable(goodsId, playAt);
+        List<PlayTime> list = playRepository.selectTimeTableList(goodsId, playAt);
 
         if(Objects.isNull(list)) {
             log.error("공연 회차 순서 리스트 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
@@ -44,6 +44,22 @@ public class PlayServiceImpl implements PlayService {
         }
 
         return list;
+    }
+
+    @Override
+    public PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId) {
+        PlayTime playTime = playRepository.selectTimeTable(playTimeId, goodsId);
+        List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
+        List<String> actorList = new ArrayList<>();
+
+        if(Objects.isNull(playTime)) {
+            log.error("회차 정보 조회 중 예외 발생 playTimeId: {}, goodsId: {}", playTimeId, goodsId);
+            throw new RuntimeException("회차 정보 조회에 실패했습니다.");
+        }
+
+        seatCountDTOList = findSeatCount(playTimeId);
+
+        return new PlayTimeDTO(playTime, seatCountDTOList, actorList);
     }
 
     @Override
@@ -56,21 +72,5 @@ public class PlayServiceImpl implements PlayService {
         }
 
         return list;
-    }
-
-    @Override
-    public SeatDTO findSeatDTO(long goodsId, LocalDate playAt) {
-        List<PlayTime> timeTableList = findPlayOrder(goodsId, playAt);
-        List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
-
-        if(Objects.isNull(timeTableList)) {
-            log.error("첫번째 회차의 구역별 잔여 좌석 개수 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
-            throw new RuntimeException("구역별 잔여 좌석 개수 조회에 실패했습니다.");
-        }
-
-        long playTimeId = timeTableList.get(0).getPlayTimeId();
-        seatCountDTOList = findSeatCount(playTimeId);
-
-        return new SeatDTO(timeTableList, seatCountDTOList);
     }
 }

@@ -49,10 +49,10 @@ class JdbcTemplatePlayRepositoryTest {
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
         //when
-        when(playRepository.selectTimeTable(goodsId, playAt))
+        when(playRepository.selectTimeTableList(goodsId, playAt))
                 .thenReturn(Collections.emptyList());
 
-        List<PlayTime> list = playRepository.selectTimeTable(goodsId, playAt);
+        List<PlayTime> list = playRepository.selectTimeTableList(goodsId, playAt);
 
         //then
         assertThat(list).isEmpty();
