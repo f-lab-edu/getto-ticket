@@ -87,9 +87,22 @@ class GoodsControllerTest {
     void findGoods() throws Exception {
         //given
         long id = 1;
-        Goods expectedGoods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30", formatter), LocalDate.parse("2025-01-30", formatter), "1900", "샤롯데", "", "", 1, 2);
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
 
-        doReturn(expectedGoods)
+        doReturn(goods)
                 .when(goodsService).findGoods(id);
 
         //when
@@ -110,7 +123,20 @@ class GoodsControllerTest {
     void addGoods() throws Exception {
         //given
         long id = 1;
-        Goods goods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
         String goodsJson = objectMapper.writeValueAsString(goods);
 
         //when
@@ -130,7 +156,20 @@ class GoodsControllerTest {
     void modifyGoods() throws Exception {
         //given
         long id = 1;
-        Goods goods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
         String goodsJson = objectMapper.writeValueAsString(goods);
 
         //when
@@ -150,7 +189,20 @@ class GoodsControllerTest {
     void removeGoods() throws Exception {
         //given
         long id = 1;
-        Goods goods = new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2);
+        Goods goods = Goods.builder()
+                .id(id)
+                .genreName("서울")
+                .title("지킬앤하이드")
+                .desc("")
+                .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                .performanceTime("1900")
+                .location("샤롯데")
+                .x("")
+                .y("")
+                .genreId(1)
+                .placeId(2)
+                .build();
         String goodsJson = objectMapper.writeValueAsString(goods);
 
         //when
@@ -165,41 +217,36 @@ class GoodsControllerTest {
                 .andReturn();
     }
 
-    @Test
-    @DisplayName("좌석 가격 조회")
-    void zonePrice() throws Exception {
-        //given
-        long id = 1;
-
-        doReturn(createZoneList())
-                .when(goodsService).findZonePrice(id);
-
-        //when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/goods/zone/price/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON));
-
-        //then
-        MvcResult mvcResult = resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].grade").value("1"))
-                .andExpect(jsonPath("$.data[0].name").value("VIP"))
-                .andExpect(jsonPath("$.data[1].grade").value("2"))
-                .andExpect(jsonPath("$.data[1].name").value("R"))
-                .andReturn();
-    }
-
     private List<Goods> createGoodsList() {
         return Arrays.asList(
-                new Goods(1, "서울", "지킬앤하이드", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2)
-                , new Goods(2, "경기", "웃는남자", "", LocalDate.parse("2024-11-30"), LocalDate.parse("2025-01-30"), "1900", "샤롯데", "", "", 1, 2)
-        );
-    }
-
-    private List<Zone> createZoneList() {
-        return Arrays.asList(
-                new Zone(1, "1", "VIP", 170000)
-                , new Zone(2, "2", "R", 140000)
+                Goods.builder()
+                        .id(1)
+                        .genreName("서울")
+                        .title("지킬앤하이드")
+                        .desc("")
+                        .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                        .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                        .performanceTime("1900")
+                        .location("샤롯데")
+                        .x("")
+                        .y("")
+                        .genreId(1)
+                        .placeId(2)
+                        .build()
+                , Goods.builder()
+                        .id(2)
+                        .genreName("경기")
+                        .title("웃는남자")
+                        .desc("")
+                        .performanceStartDate(LocalDate.parse("2024-11-30", formatter))
+                        .performanceEndDate(LocalDate.parse("2025-01-30", formatter))
+                        .performanceTime("1900")
+                        .location("샤롯데")
+                        .x("")
+                        .y("")
+                        .genreId(1)
+                        .placeId(2)
+                        .build()
         );
     }
 }

@@ -61,11 +61,4 @@ public class GoodsController {
         goodsService.removeGoods(goods);
         return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), "상품 삭제에 성공하였습니다."));
     }
-
-    // 좌석 가격 조회
-    @GetMapping("/zone/price/{id}")
-    public ResponseEntity<ApiResponse<List<Zone>>> zonePrice(@PathVariable long id) {
-        List<Zone> data = goodsService.findZonePrice(id);
-        return ResponseEntity.ok(ApiResponse.ok(data));
-    }
 }

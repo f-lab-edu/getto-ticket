@@ -10,7 +10,7 @@ import java.util.List;
 public interface PlayService {
     List<String> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate);
     List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt);
-    PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId, LocalDate playAt);
+    PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId);
     List<SeatCountDTO> findSeatCount(long playTimeId);
 
 }

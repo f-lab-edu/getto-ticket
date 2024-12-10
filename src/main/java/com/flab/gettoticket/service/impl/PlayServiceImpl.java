@@ -47,13 +47,13 @@ public class PlayServiceImpl implements PlayService {
     }
 
     @Override
-    public PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId, LocalDate playAt) {
-        PlayTime playTime = playRepository.selectTimeTable(playTimeId, goodsId, playAt);
+    public PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId) {
+        PlayTime playTime = playRepository.selectTimeTable(playTimeId, goodsId);
         List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
         List<String> actorList = new ArrayList<>();
 
         if(Objects.isNull(playTime)) {
-            log.error("회차 정보 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
+            log.error("회차 정보 조회 중 예외 발생 playTimeId: {}, goodsId: {}", playTimeId, goodsId);
             throw new RuntimeException("회차 정보 조회에 실패했습니다.");
         }
 

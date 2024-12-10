@@ -76,7 +76,7 @@ class PlayServiceImplTest {
         long goodsId = 1L;
         LocalDate playAt = LocalDate.parse("20241130", formatter);
 
-        when(playRepository.selectTimeTable(playTimeId, goodsId, playAt))
+        when(playRepository.selectTimeTable(playTimeId, goodsId))
                 .thenReturn(
                         new PlayTime(playAt, 1, 1600, 1)
                 );
@@ -87,7 +87,7 @@ class PlayServiceImplTest {
                 ));
 
         //when
-        PlayTimeDTO dto = playServiceImpl.findPlayTimeDTO(playTimeId, goodsId, playAt);
+        PlayTimeDTO dto = playServiceImpl.findPlayTimeDTO(playTimeId, goodsId);
 
         //then
         assertThat(dto.getSeatCountList()).hasSize(2);

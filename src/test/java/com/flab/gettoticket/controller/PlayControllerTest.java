@@ -122,7 +122,7 @@ class PlayControllerTest {
         );
 
         doReturn(playTimeDTO)
-                .when(playService).findPlayTimeDTO(playTimeId, goodsId, playAt);
+                .when(playService).findPlayTimeDTO(playTimeId, goodsId);
 
         //when
         ResultActions resultActions = mockMvc.perform(

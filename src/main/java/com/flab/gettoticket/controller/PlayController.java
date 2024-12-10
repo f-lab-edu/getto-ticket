@@ -62,9 +62,8 @@ public class PlayController {
     public ResponseEntity<ApiResponse<PlayTimeDTO>> playOrderInfo(
             @RequestParam long playTimeId
             , @RequestParam long goodsId
-            , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate playAt
     ) {
-        PlayTimeDTO data = playService.findPlayTimeDTO(playTimeId, goodsId, playAt);
+        PlayTimeDTO data = playService.findPlayTimeDTO(playTimeId, goodsId);
         return ResponseEntity.ok(ApiResponse.ok(data));
     }
 }
