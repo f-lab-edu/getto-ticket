@@ -59,7 +59,7 @@ class SeatControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/seat/zone/price/{id}", id)
+                MockMvcRequestBuilders.get("/seat/price/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON));
 
         //then
