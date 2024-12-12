@@ -1,12 +1,14 @@
 package com.flab.gettoticket.entity;
 
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Goods {
     private long id;
     private String genreName;
@@ -20,19 +22,5 @@ public class Goods {
     private String y;
     private long genreId;
     private long placeId;
-
-    public Goods(long id, String genreName, String title, String desc, LocalDate performanceStartDate, LocalDate performanceEndDate, String performanceTime, String location, String x, String y, long genreId, long placeId) {
-        this.id = id;
-        this.genreName = genreName;
-        this.title = title;
-        this.desc = desc;
-        this.performanceStartDate = performanceStartDate;
-        this.performanceEndDate = performanceEndDate;
-        this.performanceTime = performanceTime;
-        this.location = location;
-        this.x = x;
-        this.y = y;
-        this.genreId = genreId;
-        this.placeId = placeId;
-    }
+    private String placeName;
 }

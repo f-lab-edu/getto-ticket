@@ -11,5 +11,4 @@ public interface GoodsRepository {
     int insertGoods(Goods goods);
     int updateGoods(Goods goods);
     int deleteGoods(long id);
-    List<Zone> selectZonePrice(long id);
 }

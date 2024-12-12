@@ -72,7 +72,7 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
 
         List<Goods> goodsList = jdbcTemplate.query(sql, goodsRowMapper(), id);
 
-        return goodsList.get(0);
+        return goodsList.isEmpty() ? null : goodsList.get(0);
     }
 
     @Transactional
@@ -95,7 +95,7 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
                     """;
 
         String goodsSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
-        long id = Integer.valueOf(goodsSeq);
+        long id = Long.parseLong(goodsSeq);
         String title = goods.getTitle();
         String desc = goods.getDesc();
         LocalDate performanceStartDate = goods.getPerformanceStartDate();
@@ -140,24 +140,6 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         return jdbcTemplate.update(sql, id);
     }
 
-    @Override
-    public List<Zone> selectZonePrice(long id) {
-        String sql = """
-                    SELECT 
-                        id
-                        , grade
-                        , name
-                        , price 
-                    FROM zone 
-                    WHERE goods_id = ? 
-                    ORDER BY grade
-                    """;
-
-        List<Zone> list = jdbcTemplate.query(sql, zoneRowMapper(), id);
-
-        return list;
-    }
-
     private RowMapper<Goods> goodsRowMapper() {
         return ((rs, rowNum) -> {
             long id = rs.getLong("id");
@@ -173,18 +155,20 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
             long genreId = rs.getLong("genre_id");
             long placeId = rs.getLong("place_id");
 
-            return new Goods(id, genreName, title, desc, performanceStartDate, performanceEndDate, performanceTime, location, x, y, genreId, placeId);
-        });
-    }
-
-    private RowMapper<Zone> zoneRowMapper() {
-        return ((rs, rowNum) -> {
-            long id = rs.getLong("id");
-            String grade = rs.getString("grade");
-            String name = rs.getString("name");
-            int price = rs.getInt("price");
-
-            return new Zone(id, grade, name, price);
+            return Goods.builder()
+                    .id(id)
+                    .genreName(genreName)
+                    .title(title)
+                    .desc(desc)
+                    .performanceStartDate(performanceStartDate)
+                    .performanceEndDate(performanceEndDate)
+                    .performanceTime(performanceTime)
+                    .location(location)
+                    .x(x)
+                    .y(y)
+                    .genreId(genreId)
+                    .placeId(placeId)
+                    .build();
         });
     }
 }
