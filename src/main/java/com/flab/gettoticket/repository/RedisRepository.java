@@ -11,50 +11,28 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Repository
 @Slf4j
 public class RedisRepository {
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ZSetOperations<String, Object> zsetOperations;
 
     public RedisRepository(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
-        this.zsetOperations = redisTemplate.opsForZSet();
     }
 
     private final int DEFAULT_EXPIRE_SECONDS = 120; //1m
 
-    public Object findObjectByScore(String key, int start, int amount) {
-        List<Object> list = new ArrayList<>();
-
-        Set<ZSetOperations.TypedTuple<Object>> tupleSet = zsetOperations.rangeByScoreWithScores(key, start, amount);
-
-        if(tupleSet != null) {
-            for(ZSetOperations.TypedTuple<Object> obj : tupleSet) {
-                try {
-                    Object object = obj.getValue();
-
-                    if(object != null) {
-                        list.add(object);
-                    }
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        else {
-            log.info("keys is null");
-        }
-
-        return list.isEmpty() ? list : list.get(0);
+    public void setData(String key, Object value){
+        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
     }
 
-    public void saveObject(Object object, String key, double score) {
-        Set<ZSetOperations.TypedTuple<Object>> tupleSet = new HashSet<>();
+    public Object getData(String key){
+        return redisTemplate.opsForValue().get(key);
+    }
 
-        tupleSet.add(new DefaultTypedTuple<>(object, score));
-        zsetOperations.add(key, tupleSet);
-//        redisTemplate.expire(key, Duration.ofSeconds(DEFAULT_EXPIRE_SECONDS));
+    public void deleteData(String key){
+        redisTemplate.delete(key);
     }
 }
