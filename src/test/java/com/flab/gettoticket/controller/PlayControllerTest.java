@@ -60,7 +60,7 @@ class PlayControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/play-time/list")
+                MockMvcRequestBuilders.get("/v1/play-time/list")
                         .param("goodsId", String.valueOf(goodsId))
                         .param("startDate", String.valueOf(startDate))
                         .param("endDate", String.valueOf(endDate))
@@ -88,7 +88,7 @@ class PlayControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/play-time/order/list")
+                MockMvcRequestBuilders.get("/v1/play-time/order/list")
                         .param("goodsId", String.valueOf(goodsId))
                         .param("playAt", playAt.format(DateTimeFormatter.ofPattern("yyyyMMdd")))
                         .contentType(MediaType.APPLICATION_JSON));
@@ -126,7 +126,7 @@ class PlayControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/play-time/order")
+                MockMvcRequestBuilders.get("/v1/play-time/order")
                         .param("playTimeId", String.valueOf(playTimeId))
                         .param("goodsId", String.valueOf(goodsId))
                         .param("playAt", playAt.format(DateTimeFormatter.ofPattern("yyyyMMdd")))

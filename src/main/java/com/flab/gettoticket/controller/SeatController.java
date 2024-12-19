@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/seat")
+@RequestMapping("/v1/seat")
 @Slf4j
 public class SeatController {
 
@@ -23,8 +23,8 @@ public class SeatController {
 
     // 좌석 조회
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<Seat>>> seatList(@RequestParam long goodsId) {
-        List<Seat> data = seatService.findSeatList(goodsId);
+    public ResponseEntity<ApiResponse<List<Seat>>> seatList(@RequestParam long goodsId, @RequestParam long playId) {
+        List<Seat> data = seatService.findSeatList(goodsId, playId);
         return ResponseEntity.ok(ApiResponse.ok(data));
     }
 

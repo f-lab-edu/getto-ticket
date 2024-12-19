@@ -1,7 +1,6 @@
 package com.flab.gettoticket.service.impl;
 
 import com.flab.gettoticket.common.ApiResponse;
-import com.flab.gettoticket.common.BCryptEncoder;
 import com.flab.gettoticket.dto.SigninRequest;
 import com.flab.gettoticket.dto.SignupReqeust;
 import com.flab.gettoticket.entity.Users;
@@ -9,19 +8,17 @@ import com.flab.gettoticket.repository.UserRepository;
 import com.flab.gettoticket.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
+@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptEncoder bCryptEncoder;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        this.bCryptEncoder = new BCryptEncoder();
-    }
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ApiResponse signUp(SignupReqeust signupReqeust) {
@@ -33,7 +30,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String password = signupReqeust.getPassword();
-        String encodePassword = bCryptEncoder.encode(password);
+        String encodePassword = passwordEncoder.encode(password);
         signupReqeust.setPassword(encodePassword);
 
         userRepository.saveUser(signupReqeust);
@@ -50,7 +47,7 @@ public class UserServiceImpl implements UserService {
             return ApiResponse.create(0, "아이디 또는 비밀번호가 잘못되었습니다.", null);
         }
 
-        boolean check = bCryptEncoder.matches(password, user.getPassword());
+        boolean check = passwordEncoder.matches(password, user.getPassword());
         user.setPassword("");
 
         if(check) {

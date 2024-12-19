@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/play-time")
+@RequestMapping("/v1/play-time")
 @Slf4j
 public class PlayController {
     private final PlayService playService;

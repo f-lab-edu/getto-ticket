@@ -20,7 +20,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
 
 
     @Override
-    public List<Seat> selectSeatList(long goodsId) {
+    public List<Seat> selectSeatList(long goodsId, long playId) {
         String sql = """
                 SELECT 
                     id
@@ -28,12 +28,14 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
                     , col
                     , floor
                     , sale_yn
+                    , play_id
                 FROM seat
                 WHERE goods_id=?
+                AND play_id=?
                 ORDER BY floor, col, name
                 """;
 
-        List<Seat> list = jdbcTemplate.query(sql, seatRowMapper(), goodsId);
+        List<Seat> list = jdbcTemplate.query(sql, seatRowMapper(), goodsId, playId);
 
         return list;
     }
@@ -75,6 +77,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
             int floor = rs.getInt("floor");
             String sale_yn = rs.getString("sale_yn");
             char saleYn = sale_yn.charAt(0);
+            long playId = rs.getLong("play_id");
 
             return Seat.builder()
                     .id(id)
@@ -82,6 +85,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
                     .col(col)
                     .floor(floor)
                     .saleYn(saleYn)
+                    .playId(playId)
                     .build();
         });
     }

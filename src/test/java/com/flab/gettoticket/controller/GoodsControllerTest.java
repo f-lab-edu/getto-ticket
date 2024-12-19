@@ -67,7 +67,7 @@ class GoodsControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/goods/list")
+                MockMvcRequestBuilders.get("/v1/goods/list")
                         .param("page", String.valueOf(page))
                         .param("size", String.valueOf(size))
                         .contentType(MediaType.APPLICATION_JSON));
@@ -107,7 +107,7 @@ class GoodsControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/goods/{id}", id)
+                MockMvcRequestBuilders.get("/v1/goods/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON));
 
         //then
@@ -141,7 +141,7 @@ class GoodsControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/goods/add")
+                MockMvcRequestBuilders.post("/v1/goods/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(goodsJson));
 
@@ -174,7 +174,7 @@ class GoodsControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.patch("/goods/modify")
+                MockMvcRequestBuilders.patch("/v1/goods/modify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(goodsJson));
 
@@ -207,7 +207,7 @@ class GoodsControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete("/goods/remove")
+                MockMvcRequestBuilders.delete("/v1/goods/remove")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(goodsJson));
 
