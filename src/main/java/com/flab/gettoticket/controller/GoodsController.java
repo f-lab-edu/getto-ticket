@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/goods")
+@RequestMapping("/v1/goods")
 @Slf4j
 public class GoodsController {
     private final GoodsService goodsService;
