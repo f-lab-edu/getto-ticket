@@ -5,6 +5,8 @@ import com.flab.gettoticket.entity.Booking;
 import com.flab.gettoticket.entity.BookingSeat;
 import com.flab.gettoticket.entity.Goods;
 import com.flab.gettoticket.entity.PlayTime;
+import com.flab.gettoticket.enums.BookingStatus;
+import com.flab.gettoticket.enums.SeatStatus;
 import com.flab.gettoticket.repository.BookingRepository;
 import com.flab.gettoticket.repository.GoodsRepository;
 import com.flab.gettoticket.repository.PlayRepository;
@@ -48,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
 
         for (Booking booking : bookingList) {
             long bookingId = booking.getId();
-            String bookingStatus = booking.getStatus();
+            BookingStatus status = booking.getStatus();
             LocalDateTime bookingAt = booking.getBookingAt();
             long goodsId = booking.getGoodsId();
             long playTimeId = booking.getPlayTimeId();
@@ -63,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
             list.add(BookingListResponse.builder()
                     .bookingAt(bookingAt)
                     .bookingId(bookingId)
-                    .bookingStatus(bookingStatus)
+                    .bookingStatus(status)
                     .goodsTitle(goodsTitle)
                     .playAt(playAt)
                     .ticketCount(ticketCount)
@@ -85,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
 
         String userName = booking.getUserName();
         long bookingId = booking.getId();
-        String bookingStatus = booking.getStatus();
+        BookingStatus status = booking.getStatus();
         LocalDateTime bookingAt = booking.getBookingAt();
         long goodsId = booking.getGoodsId();
         long playTimeId = booking.getPlayTimeId();
@@ -101,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingDetailResponse.builder()
                 .userName(userName)
                 .bookingId(bookingId)
-                .bookingStatus(bookingStatus)
+                .bookingStatus(status)
                 .bookingAt(bookingAt)
                 .goodsTitle(goodsTitle)
                 .playAt(playAt)
@@ -115,12 +117,12 @@ public class BookingServiceImpl implements BookingService {
     public int modifyBookingToCancel(CancelBookingRequest cancelBookingRequest) {
         long bookingId = cancelBookingRequest.getBookingId();
         String userId = cancelBookingRequest.getUserId();
-        String status = cancelBookingRequest.getStatus();
+        BookingStatus bookingStatus = cancelBookingRequest.getBookingStatus();
 
         Booking booking = Booking.builder()
                             .id(bookingId)
                             .userId(userId)
-                            .status(status)
+                            .status(bookingStatus)
                             .build();
 
         int result = bookingRepository.updateBooking(booking);
@@ -140,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
         for(BookingSeat obj : bookingSeatsList) {
             BookingSeat bookingSeat = BookingSeat.builder()
                     .id(obj.getId())
-                    .status(status)
+                    .status(bookingStatus)
                     .bookingId(bookingId)
                     .build();
 
@@ -185,7 +187,7 @@ public class BookingServiceImpl implements BookingService {
     public int addBooking(AddBookingRequest addBookingRequest) {
         int result = 0;
 
-        String status = addBookingRequest.getStatus();
+        BookingStatus bookingStatus = addBookingRequest.getBookingStatus();
         long goodsId = addBookingRequest.getGoodsId();
         long playTimeId = addBookingRequest.getPlayTimeId();
         String userId = addBookingRequest.getUserId();
@@ -193,7 +195,7 @@ public class BookingServiceImpl implements BookingService {
         List<Long> seatIdList = addBookingRequest.getSeatIdList();
 
         Booking booking = Booking.builder()
-                            .status(status)
+                            .status(bookingStatus)
                             .goodsId(goodsId)
                             .playTimeId(playTimeId)
                             .userId(userId)
@@ -211,7 +213,7 @@ public class BookingServiceImpl implements BookingService {
         //예매 좌석
         for (long seatId : seatIdList) {
             BookingSeat bookingSeat = BookingSeat.builder()
-                    .status(status)
+                    .status(bookingStatus)
                     .bookingId(bookingId)
                     .seatId(seatId)
                     .build();
@@ -225,8 +227,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //좌석 상태 변경
-        String saleYn = "Y";
-        result = modifySeatStatus(seatIdList, saleYn);
+        result = modifySeatStatus(seatIdList, SeatStatus.SOLD_OUT.getCode());
 
         return result;
     }

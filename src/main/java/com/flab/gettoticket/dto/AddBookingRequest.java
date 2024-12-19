@@ -1,5 +1,6 @@
 package com.flab.gettoticket.dto;
 
+import com.flab.gettoticket.enums.BookingStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddBookingRequest {
-    private String status;
+    private BookingStatus bookingStatus;
     private long goodsId;
     private long playTimeId;
     private String userId;

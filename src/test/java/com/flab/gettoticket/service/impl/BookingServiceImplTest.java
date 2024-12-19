@@ -5,6 +5,7 @@ import com.flab.gettoticket.entity.Booking;
 import com.flab.gettoticket.entity.BookingSeat;
 import com.flab.gettoticket.entity.Goods;
 import com.flab.gettoticket.entity.PlayTime;
+import com.flab.gettoticket.enums.BookingStatus;
 import com.flab.gettoticket.repository.BookingRepository;
 import com.flab.gettoticket.repository.GoodsRepository;
 import com.flab.gettoticket.repository.PlayRepository;
@@ -54,7 +55,7 @@ class BookingServiceImplTest {
         List<Booking> bookingList = Arrays.asList(
                 Booking.builder()
                         .id(1L)
-                        .status("upcoming")
+                        .status(BookingStatus.UPCOMING)
                         .bookingAt(LocalDateTime.now())
                         .goodsId(101L)
                         .playTimeId(201L)
@@ -94,7 +95,7 @@ class BookingServiceImplTest {
 
         Booking booking = Booking.builder()
                 .id(1L)
-                .status("upcoming")
+                .status(BookingStatus.UPCOMING)
                 .bookingAt(LocalDateTime.now())
                 .goodsId(101L)
                 .playTimeId(201L)
@@ -116,11 +117,11 @@ class BookingServiceImplTest {
         List<BookingSeatDetail> seatDetails = Arrays.asList(
                 BookingSeatDetail.builder()
                         .bookingSeatId(1L)
-                        .bookingSeatStatus("upcoming")
+                        .bookingSeatStatus(BookingStatus.UPCOMING)
                         .build()
                 , BookingSeatDetail.builder()
                         .bookingSeatId(2L)
-                        .bookingSeatStatus("upcoming")
+                        .bookingSeatStatus(BookingStatus.UPCOMING)
                         .build()
         );
 
@@ -146,13 +147,13 @@ class BookingServiceImplTest {
         CancelBookingRequest cancelBookingRequest = CancelBookingRequest.builder()
                 .bookingId(1L)
                 .userId("test2@gmail.com")
-                .status("cancelled")
+                .bookingStatus(BookingStatus.CANCELLED)
                 .build();
 
         Booking booking = Booking.builder()
                 .id(1L)
                 .userId("test2@gmail.com")
-                .status("cancelled")
+                .status(BookingStatus.CANCELLED)
                 .build();
 
         doAnswer(invocation -> {
@@ -170,13 +171,13 @@ class BookingServiceImplTest {
                 BookingSeat.builder()
                         .id(1L)
                         .seatId(100L)
-                        .status("cancelled")
+                        .status(BookingStatus.CANCELLED)
                         .bookingId(bookingId)
                         .build(),
                 BookingSeat.builder()
                         .id(2L)
                         .seatId(101L)
-                        .status("cancelled")
+                        .status(BookingStatus.CANCELLED)
                         .bookingId(bookingId)
                         .build()
         );
@@ -187,7 +188,7 @@ class BookingServiceImplTest {
             BookingSeat bookingSeat = invocation.getArgument(0); // 전달된 BookingSeat 객체 가져오기
 
             assertThat(bookingSeat.getBookingId()).isEqualTo(1L);
-            assertThat(bookingSeat.getStatus()).isEqualTo("cancelled");
+            assertThat(bookingSeat.getStatus()).isEqualTo(BookingStatus.CANCELLED);
 
             return 1;
         }).when(bookingRepository).updateBookingSeat(any(BookingSeat.class));
@@ -236,7 +237,7 @@ class BookingServiceImplTest {
         List<Long> seatIdList = Arrays.asList(1L, 2L);
 
         AddBookingRequest addBookingRequest = AddBookingRequest.builder()
-                .status("upcoming")
+                .bookingStatus(BookingStatus.UPCOMING)
                 .goodsId(1L)
                 .playTimeId(3L)
                 .userId("test2@gmail.com")
@@ -255,7 +256,7 @@ class BookingServiceImplTest {
 
             assertNotNull(bookingSeat);
             assertEquals(bookingSeq, bookingSeat.getBookingId());
-            assertEquals(addBookingRequest.getStatus(), bookingSeat.getStatus());
+            assertEquals(addBookingRequest.getBookingStatus(), bookingSeat.getStatus());
 
             if (bookingSeat.getSeatId() == 0L) {
                 return 0;
@@ -267,7 +268,7 @@ class BookingServiceImplTest {
         // 예매 좌석 상태 처리
         for (long seatId : seatIdList) {
             BookingSeat bookingSeat = BookingSeat.builder()
-                    .status(addBookingRequest.getStatus())
+                    .status(addBookingRequest.getBookingStatus())
                     .bookingId(bookingSeq)
                     .seatId(seatId)
                     .build();

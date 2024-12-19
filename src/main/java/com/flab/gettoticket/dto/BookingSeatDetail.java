@@ -1,5 +1,6 @@
 package com.flab.gettoticket.dto;
 
+import com.flab.gettoticket.enums.BookingStatus;
 import lombok.*;
 
 @Getter
@@ -9,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class BookingSeatDetail {
     private long bookingSeatId;
-    private String bookingSeatStatus;
+    private BookingStatus bookingSeatStatus;
     private String zoneName;
     private int grade;
     private int price;

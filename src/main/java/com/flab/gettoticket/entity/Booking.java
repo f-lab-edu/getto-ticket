@@ -1,5 +1,6 @@
 package com.flab.gettoticket.entity;
 
+import com.flab.gettoticket.enums.BookingStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Booking {
     private long id;
-    private String status;
+    private BookingStatus status;
     private long goodsId;
     private long playTimeId;
     private String userId;

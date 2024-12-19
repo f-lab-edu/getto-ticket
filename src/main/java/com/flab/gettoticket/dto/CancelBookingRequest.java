@@ -1,5 +1,6 @@
 package com.flab.gettoticket.dto;
 
+import com.flab.gettoticket.enums.BookingStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,5 +12,5 @@ import java.time.LocalDate;
 public class CancelBookingRequest {
     private long bookingId;
     private String userId;
-    private String status;
+    private BookingStatus bookingStatus;
 }

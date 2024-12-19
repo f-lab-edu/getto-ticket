@@ -3,6 +3,7 @@ package com.flab.gettoticket.repository;
 import com.flab.gettoticket.dto.BookingSeatDetail;
 import com.flab.gettoticket.entity.Booking;
 import com.flab.gettoticket.entity.BookingSeat;
+import com.flab.gettoticket.enums.BookingStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -141,7 +142,8 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
         long id = booking.getId();
         String userId = booking.getUserId();
-        String status = booking.getStatus();
+        BookingStatus bookingStatus = booking.getStatus();
+        String status = bookingStatus.getCode();
 
         return jdbcTemplate.update(sql, status, id, userId);
     }
@@ -159,7 +161,8 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
         long id = bookingSeat.getId();
         long bookigId = bookingSeat.getBookingId();
-        String status = bookingSeat.getStatus();
+        BookingStatus bookingStatus = bookingSeat.getStatus();
+        String status = bookingStatus.getCode();
 
         return jdbcTemplate.update(sql, status, id, bookigId);
     }
@@ -183,7 +186,8 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
         String bookingSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
         long id = bookingSeq != null ? Long.parseLong(bookingSeq) : 0L;
-        String status = booking.getStatus();
+        BookingStatus bookingStatus = booking.getStatus();
+        String status = bookingStatus.getCode();
         long goodsId = booking.getGoodsId();
         long playTimeId = booking.getPlayTimeId();
         String userId = booking.getUserId();
@@ -214,7 +218,8 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
         String bookingSeatSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
         long id = bookingSeatSeq != null ? Long.parseLong(bookingSeatSeq) : 0L;
-        String status = bookingSeat.getStatus();
+        BookingStatus bookingStatus = bookingSeat.getStatus();
+        String status = bookingStatus.getCode();
         long bookingId = bookingSeat.getBookingId();
         long seatId = bookingSeat.getSeatId();
 
@@ -231,9 +236,11 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
             String userName = rs.getString("user_name");
             LocalDateTime bookingAt = rs.getTimestamp("booking_at").toLocalDateTime();
 
+            BookingStatus bookingStatus = BookingStatus.setCode(status);
+
             return Booking.builder()
                     .id(id)
-                    .status(status)
+                    .status(bookingStatus)
                     .goodsId(goodsId)
                     .playTimeId(playTimeId)
                     .userName(userName)
@@ -248,9 +255,11 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
             String status = rs.getString("status");
             long seatId = rs.getLong("seat_id");
 
+            BookingStatus bookingStatus = BookingStatus.setCode(status);
+
             return BookingSeat.builder()
                     .id(id)
-                    .status(status)
+                    .status(bookingStatus)
                     .seatId(seatId)
                     .build();
         });
@@ -267,9 +276,11 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
             int col = rs.getInt("col");
             int floor = rs.getInt("floor");
 
+            BookingStatus bookingStatus = BookingStatus.setCode(bookingSeatStatus);
+
             return BookingSeatDetail.builder()
                     .bookingSeatId(bookingSeatId)
-                    .bookingSeatStatus(bookingSeatStatus)
+                    .bookingSeatStatus(bookingStatus)
                     .zoneName(zoneName)
                     .grade(grade)
                     .price(price)
