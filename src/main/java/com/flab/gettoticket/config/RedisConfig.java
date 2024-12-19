@@ -26,8 +26,12 @@ public class RedisConfig {
         // value: Json 형식 직렬화
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));    //new GenericJackson2JsonRedisSerializer()
 
+        // key: Hash Field
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
         // value: Hash 형식 직렬화
-        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+//        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         redisTemplate.afterPropertiesSet();
 
