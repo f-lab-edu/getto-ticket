@@ -22,9 +22,6 @@ public class RedisSeatRepositoryImpl implements RedisSeatRepository{
         this.hashOps = redisTemplate.opsForHash();
     }
 
-    private final int DEFAULT_EXPIRE_SECONDS = 300; //5m TODO 별도 관리
-
-
     @Override
     public List<Seat> selectSeatAll(String plainTextKey) {
         String key = RedisKey.SEAT_KEY.getKey() + plainTextKey;

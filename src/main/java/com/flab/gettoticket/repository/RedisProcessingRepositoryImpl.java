@@ -19,8 +19,6 @@ public class RedisProcessingRepositoryImpl implements RedisProcessingRepository 
         this.hashOperations = redisTemplate.opsForHash();
     }
 
-    private final int PROCESSING_KEY_EXPIRE_SECONDS = 300; //5m, TODO 공연종료일+1까지 계산&유지
-
     @Override
     public Map<String, String> selectProcessingQueueAll(String plainTextKey) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;

@@ -99,8 +99,8 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
                                         .mapToLong(s -> Long.parseLong(s.split(":")[1]))
                                         .toArray();
                 long playDateTime = valueArr[2];
-                long timeout = TimeUnitUtil.getCurrDateTimeDiff(playDateTime);      //현재 시간 기준 timeout 시간까지 key 유효시간 설정
-                redisTemplate.expire(processingQueueKey, timeout, TimeUnit.SECONDS);
+                long keyExpireDuration = TimeUnitUtil.getCurrDateTimeDiff(playDateTime);      //'playDateTime - 현재 시간' 까지 key 유효시간 설정
+                redisTemplate.expire(processingQueueKey, keyExpireDuration, TimeUnit.SECONDS);
             }
 
             connection.exec();

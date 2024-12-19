@@ -19,11 +19,11 @@ public class RedisCommRepositoryImpl implements RedisCommRepository{
         this.redisConnection = redisTemplate.getConnectionFactory().getConnection();
     }
 
-    private final int DEFAULT_EXPIRE_SECONDS = 300; //5m
+    private final int DEFAULT_EXPIRE_DURATION = 300; //5m
 
     @Override
     public void setData(String key, String value){
-        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_DURATION, TimeUnit.SECONDS);
     }
 
     @Override
