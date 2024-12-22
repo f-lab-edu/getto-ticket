@@ -22,10 +22,10 @@ public class RedisRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    private final int DEFAULT_EXPIRE_SECONDS = 120; //1m
+    private final int DEFAULT_EXPIRE_DURATION = 120; //1m
 
     public void setData(String key, Object value){
-        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_DURATION, TimeUnit.SECONDS);
     }
 
     public Object getData(String key){
