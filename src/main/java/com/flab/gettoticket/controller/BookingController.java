@@ -48,8 +48,8 @@ public class BookingController {
     public ResponseEntity<ApiResponse<Void>> modifyBooking(@RequestBody CancelBookingRequest cancelBookingRequest) {
         bookingService.modifyBookingToCancel(cancelBookingRequest);
 
-        String message = "예매 취소가 완료되었습니다.";
-        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), message));
+        String message = ApiResponseCode.BOOKING_CANCLE_SUCCESS.getMessage();
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.BOOKING_CANCLE_SUCCESS.getCode(), message));
     }
 
     // 예매 하기
@@ -57,7 +57,7 @@ public class BookingController {
     public ResponseEntity<ApiResponse<Void>> addBooking(@RequestBody AddBookingRequest addBookingRequest) {
         bookingService.addBooking(addBookingRequest);
 
-        String message = "예매에 성공하였습니다.";
-        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.SUCCESS.getCode(), message));
+        String message = ApiResponseCode.BOOKING_SUCCESS.getMessage();
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.BOOKING_SUCCESS.getCode(), message));
     }
 }
