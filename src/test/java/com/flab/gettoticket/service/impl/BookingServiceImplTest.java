@@ -221,10 +221,9 @@ class BookingServiceImplTest {
         }
 
         // when
-        int result = bookingServiceImpl.modifyBookingToCancel(cancelBookingRequest);
+        bookingServiceImpl.modifyBookingToCancel(cancelBookingRequest);
 
         // then
-        assertThat(result).isEqualTo(1);
 
         // verify
         verify(bookingRepository).updateBooking(any(Booking.class));
@@ -273,13 +272,7 @@ class BookingServiceImplTest {
                     .seatId(seatId)
                     .build();
 
-            int result = bookingRepository.insertBookingSeat(bookingSeat);
-
-            if (seatId == 0L) {
-                assertEquals(0, result);
-            } else {
-                assertEquals(1, result);
-            }
+            bookingRepository.insertBookingSeat(bookingSeat);
         }
 
         //좌석 상태 변경
@@ -288,9 +281,9 @@ class BookingServiceImplTest {
         }).when(seatRepository).updateSeatSaleYn(anyLong(), anyString());
 
         //when
-        int result = bookingServiceImpl.addBooking(addBookingRequest);
+        bookingServiceImpl.addBooking(addBookingRequest);
 
         //then
-        assertThat(result).isEqualTo(1);
+//        assertThat(result).isEqualTo(1);
     }
 }

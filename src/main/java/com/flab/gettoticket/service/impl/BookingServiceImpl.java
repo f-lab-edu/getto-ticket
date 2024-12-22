@@ -7,11 +7,14 @@ import com.flab.gettoticket.entity.Goods;
 import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.enums.BookingStatus;
 import com.flab.gettoticket.enums.SeatStatus;
+import com.flab.gettoticket.exception.booking.BookingIllegalArgumentException;
+import com.flab.gettoticket.exception.booking.BookingNotFoundException;
 import com.flab.gettoticket.repository.BookingRepository;
 import com.flab.gettoticket.repository.GoodsRepository;
 import com.flab.gettoticket.repository.PlayRepository;
 import com.flab.gettoticket.repository.SeatRepository;
 import com.flab.gettoticket.service.BookingService;
+import com.flab.gettoticket.validation.BookingValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +46,9 @@ public class BookingServiceImpl implements BookingService {
 
         List<BookingListResponse> list = new ArrayList<>();
 
-        if(Objects.isNull(bookingList)) {
+        if(bookingList.isEmpty()) {
             log.error("예매 정보 조회 중 예외 발생 email: {}", email);
-            throw new RuntimeException("예매 정보 조회에 실패했습니다.");
+            throw new BookingNotFoundException("조회된 예매 정보가 없습니다.");
         }
 
         for (Booking booking : bookingList) {
@@ -80,9 +83,9 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.selectBooking(id, email);
         List<BookingSeatDetail> bookingSeatDetail = bookingRepository.selectBookingSeatDetailList(id);
 
-        if(Objects.isNull(booking) | Objects.isNull(bookingSeatDetail)) {
+        if(Objects.isNull(booking) || bookingSeatDetail.isEmpty()) {
             log.error("예매 정보 조회 중 예외 발생 id: {}, email: {}", id, email);
-            throw new RuntimeException("예매 정보 조회에 실패했습니다.");
+            throw new BookingNotFoundException("조회된 예매 정보가 없습니다.");
         }
 
         String userName = booking.getUserName();
@@ -114,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public int modifyBookingToCancel(CancelBookingRequest cancelBookingRequest) {
+    public void modifyBookingToCancel(CancelBookingRequest cancelBookingRequest) {
         long bookingId = cancelBookingRequest.getBookingId();
         String userId = cancelBookingRequest.getUserId();
         BookingStatus bookingStatus = cancelBookingRequest.getBookingStatus();
@@ -125,18 +128,15 @@ public class BookingServiceImpl implements BookingService {
                             .status(bookingStatus)
                             .build();
 
-        int result = bookingRepository.updateBooking(booking);
+        BookingValidator.update(booking);
 
-        if(result == 0) {
-            log.error("예매 취소 중 예외 발생 booking: {}", booking);
-            throw new RuntimeException("예매 취소에 실패했습니다.");
-        }
+        bookingRepository.updateBooking(booking);
 
         List<BookingSeat> bookingSeatsList = bookingRepository.selectBookingSeat(bookingId);
 
-        if(Objects.isNull(bookingSeatsList)) {
+        if(bookingSeatsList.isEmpty()) {
             log.error("취소할 예매 좌석 조회 중 예외 발생 bookingSeatsList: {}", bookingSeatsList);
-            throw new RuntimeException("예매 취소에 실패했습니다.");
+            throw new BookingNotFoundException("조회된 좌석이 없습니다.");
         }
 
         for(BookingSeat obj : bookingSeatsList) {
@@ -146,12 +146,7 @@ public class BookingServiceImpl implements BookingService {
                     .bookingId(bookingId)
                     .build();
 
-            result = bookingRepository.updateBookingSeat(bookingSeat);
-
-            if(result == 0) {
-                log.error("예매 취소 중 예외 발생 bookingSeat: {}", bookingSeat);
-                throw new RuntimeException("예매 취소에 실패했습니다.");
-            }
+            bookingRepository.updateBookingSeat(bookingSeat);
         }
 
         String saleYn = "N";
@@ -161,32 +156,18 @@ public class BookingServiceImpl implements BookingService {
             seatIdList.add(obj.getSeatId());
         }
 
-        result = modifySeatStatus(seatIdList, saleYn);
-
-        return result;
+        modifySeatStatus(seatIdList, saleYn);
     }
 
     @Override
-    public int modifySeatStatus(List<Long> seatIdList, String saleYn) {
-        int result = 0;
-
+    public void modifySeatStatus(List<Long> seatIdList, String saleYn) {
         for (Long seatId : seatIdList) {
-            log.error("seatId: {}, saleYn: {}", seatId, saleYn);
-            result = seatRepository.updateSeatSaleYn(seatId, saleYn);
-
-            if (result == 0) {
-                log.error("예매 좌석 상태 변경 중 예외 발생 seatId: {}, saleYn: {}", seatId, saleYn);
-                throw new RuntimeException("예매 취소에 실패했습니다.");
-            }
+            seatRepository.updateSeatSaleYn(seatId, saleYn);
         }
-
-        return result;
     }
 
     @Override
-    public int addBooking(AddBookingRequest addBookingRequest) {
-        int result = 0;
-
+    public void addBooking(AddBookingRequest addBookingRequest) {
         BookingStatus bookingStatus = addBookingRequest.getBookingStatus();
         long goodsId = addBookingRequest.getGoodsId();
         long playTimeId = addBookingRequest.getPlayTimeId();
@@ -202,12 +183,19 @@ public class BookingServiceImpl implements BookingService {
                             .userName(userName)
                             .build();
 
+        BookingValidator.insert(booking);
+
         //예매 정보
         long bookingId = bookingRepository.insertBooking(booking);
 
-        if(bookingId == 0) {
+        if(bookingId <= 0) {
             log.error("예매 중 예외 발생 bookingId: {}, booking: {}", bookingId, booking);
-            throw new RuntimeException("예매에 실패했습니다.");
+            throw new BookingIllegalArgumentException("예매번호가 필요합니다.");
+        }
+
+        if(seatIdList.isEmpty()) {
+            log.error("예매 중 예외 발생 seatIdList: {}", seatIdList);
+            throw new BookingIllegalArgumentException("좌석번호는 필수값입니다.");
         }
 
         //예매 좌석
@@ -218,17 +206,10 @@ public class BookingServiceImpl implements BookingService {
                     .seatId(seatId)
                     .build();
 
-            result = bookingRepository.insertBookingSeat(bookingSeat);
-
-            if (result == 0) {
-                log.error("예매 중 예외 발생 bookingSeat: {}", bookingSeat);
-                throw new RuntimeException("예매에 실패했습니다.");
-            }
+            bookingRepository.insertBookingSeat(bookingSeat);
         }
 
         //좌석 상태 변경
-        result = modifySeatStatus(seatIdList, SeatStatus.SOLD_OUT.getCode());
-
-        return result;
+        modifySeatStatus(seatIdList, SeatStatus.SOLD_OUT.getCode());
     }
 }

@@ -131,7 +131,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
     @Transactional
     @Override
-    public int updateBooking(Booking booking) {
+    public void updateBooking(Booking booking) {
         String sql = """
                 UPDATE booking SET
                     status=?
@@ -145,12 +145,12 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         BookingStatus bookingStatus = booking.getStatus();
         String status = bookingStatus.getCode();
 
-        return jdbcTemplate.update(sql, status, id, userId);
+        jdbcTemplate.update(sql, status, id, userId);
     }
 
     @Transactional
     @Override
-    public int updateBookingSeat(BookingSeat bookingSeat) {
+    public void updateBookingSeat(BookingSeat bookingSeat) {
         String sql = """
                 UPDATE booking_seat SET
                     status=?
@@ -164,7 +164,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         BookingStatus bookingStatus = bookingSeat.getStatus();
         String status = bookingStatus.getCode();
 
-        return jdbcTemplate.update(sql, status, id, bookigId);
+        jdbcTemplate.update(sql, status, id, bookigId);
     }
 
     @Transactional
@@ -203,7 +203,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
 
     @Transactional
     @Override
-    public int insertBookingSeat(BookingSeat bookingSeat) {
+    public void insertBookingSeat(BookingSeat bookingSeat) {
         String sqlForSequence = "SELECT NEXTVAL(bookingSeat_seq) FROM DUAL";
 
         String sql = """
@@ -223,7 +223,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         long bookingId = bookingSeat.getBookingId();
         long seatId = bookingSeat.getSeatId();
 
-        return jdbcTemplate.update(sql, id, status, bookingId, seatId);
+        jdbcTemplate.update(sql, id, status, bookingId, seatId);
     }
 
     private RowMapper<Booking> bookingRowMapper() {

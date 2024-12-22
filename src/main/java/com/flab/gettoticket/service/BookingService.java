@@ -11,7 +11,7 @@ import java.util.List;
 public interface BookingService {
     List<BookingListResponse> findBookingList(String email);
     BookingDetailResponse findBooking(long id, String email);
-    int modifyBookingToCancel(CancelBookingRequest cancelBookingRequest);
-    int modifySeatStatus(List<Long> seatIdList, String saleYn);
-    int addBooking(AddBookingRequest addBookingRequest);
+    void modifyBookingToCancel(CancelBookingRequest cancelBookingRequest);
+    void modifySeatStatus(List<Long> seatIdList, String saleYn);
+    void addBooking(AddBookingRequest addBookingRequest);
 }

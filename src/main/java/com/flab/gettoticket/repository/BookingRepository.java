@@ -14,8 +14,8 @@ public interface BookingRepository {
     int selectValidBookingSeatCount(long bookingId);
     long selectBookingLastSeq();
     long selectBookingSeatLastSeq();
-    int updateBooking(Booking booking);
-    int updateBookingSeat(BookingSeat bookingSeat);
+    void updateBooking(Booking booking);
+    void updateBookingSeat(BookingSeat bookingSeat);
     long insertBooking(Booking booking);
-    int insertBookingSeat(BookingSeat bookingSeat);
+    void insertBookingSeat(BookingSeat bookingSeat);
 }
