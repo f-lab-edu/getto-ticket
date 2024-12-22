@@ -6,7 +6,9 @@ import java.util.Map;
 public interface RedisProcessingRepository {
     Map<String, String> selectProcessingQueueAll(String plainTextKey);
     long selectProcessingQueueSize(String plainTextKey);
-    void insertProcessingQueue(String plainTextKey, String token, String status);
-    void updateProcessingQueue(String plainTextKey, String token, String status);
-    void removeProcessingQueue(String plainTextKey, String token);
+    String selectProcessingQueue(String plainTextKey, long userSeq);
+    boolean hasKey(String plainTextKey, long userSeq);
+    void insertProcessingQueue(String plainTextKey, long userSeq, String status);
+    void updateProcessingQueue(String plainTextKey, long userSeq, String status);
+    void removeProcessingQueue(String plainTextKey, long userSeq);
 }

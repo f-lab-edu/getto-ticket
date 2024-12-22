@@ -25,7 +25,7 @@ public class RedisScheduler {
 
     public static final long processingCapacity = 3L;    //TODO 별도 관리
 
-    @Scheduled(cron = "*/10 * * * * *")
+//    @Scheduled(cron = "*/10 * * * * *")
     public void waitToProcessQueueList() {
         Map<String, String> processingQueueMeta = redisMetaRepository.selectQueueMetaInfo(RedisKey.PROCESSING_KEY.getMetaType());
         log.info("processingQueueMeta {}", processingQueueMeta);
@@ -51,12 +51,13 @@ public class RedisScheduler {
                         processingQueueAll.entrySet()
                                 .stream()
                                 .forEach(queue -> {
-                                    String token = queue.getKey();
+                                    String seq = queue.getKey();
+                                    long userSeq = Long.parseLong(seq);
                                     String status = queue.getValue();
                                     String processingQueueKey = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
 
                                     if( !status.equals(QueueStatus.PROCESS.getCode()) && !status.equals(QueueStatus.RESERVED.getCode()) ) {
-                                        redisProcessingRepository.removeProcessingQueue(plainTextKey, token);
+                                        redisProcessingRepository.removeProcessingQueue(plainTextKey, userSeq);
                                         redisMetaRepository.removeQueueMetaInfo(RedisKey.PROCESSING_KEY.getMetaType(), processingQueueKey);
                                     }
                                 });

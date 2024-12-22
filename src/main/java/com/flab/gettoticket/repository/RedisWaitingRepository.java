@@ -8,10 +8,10 @@ import java.util.Set;
 public interface RedisWaitingRepository {
     Set<ZSetOperations.TypedTuple<String>> selectRangeByScore(String plainTextKey, long start, long amount);
     long selectWaitingSize(String plainTextKey);
-    long selectWaitingRank(String plainTextKey, String token);
-    long selectWaitingScore(String plainTextKey, String token);
+    long selectWaitingRank(String plainTextKey, long userSeq);
+    long selectWaitingScore(String plainTextKey, long userSeq);
     List<String> selectPopMinWaitingQueue(String plainTextKey, int count);
-    long insertWaitingQueue(String plainTextKey, String token);
-    long removeWaitingQueue(String plainTextKey, String token);
+    long insertWaitingQueue(String plainTextKey, long userSeq);
+    long removeWaitingQueue(String plainTextKey, long userSeq);
 
 }

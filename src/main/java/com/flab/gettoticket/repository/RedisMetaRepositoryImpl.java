@@ -29,7 +29,6 @@ public class RedisMetaRepositoryImpl implements RedisMetaRepository{
         String key = RedisKey.QUEUE_METE_KEY.getKey() + metaType;
 
         hashOperations.put(key, queueKey, metaInfo);
-        //hashOperations.put("queue:meta:processing", "processing:goods:100:1:32349810", "공연 ID: 100, 회차 ID: 1, 공연일시: 32349810");
 
         log.info("Queue Meta Info 추가 key: {}, queueKey: {}, metaInfo: {}", key, queueKey, metaInfo);
     }

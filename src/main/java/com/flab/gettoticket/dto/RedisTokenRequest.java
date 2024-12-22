@@ -10,9 +10,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RedisTokenRequest {
+    private long userSeq;
     private String email;
     private long goodsId;
     private long playTimeId;
     private LocalDate playAt;
-    private String token;
+    private long rank;
 }

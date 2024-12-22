@@ -5,14 +5,12 @@ import com.flab.gettoticket.enums.RedisKey;
 import com.flab.gettoticket.util.TimeUnitUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -47,11 +45,12 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
                 connection.multi();
 
                     waitingQueue.forEach(queue -> {
-                        String token = queue.getValue();
+                        String seq = queue.getValue();
+                        long userSeq = Long.parseLong(seq);
                         String status = QueueStatus.PROCESS.getCode();
 
-                        redisProcessingRepository.insertProcessingQueue(plainTextKey, token, status);   //처리열 추가
-                        redisWaitingRepository.removeWaitingQueue(plainTextKey, token);                 //대기열 삭제
+                        redisProcessingRepository.insertProcessingQueue(plainTextKey, userSeq, status);   //처리열 추가
+                        redisWaitingRepository.removeWaitingQueue(plainTextKey, userSeq);                 //대기열 삭제
                         redisMetaRepository.removeQueueMetaInfo(RedisKey.WAITING_KEY.getMetaType(), waitingQueueKey);   //대기열 메타 데이터 삭제
                     });
 
@@ -67,14 +66,14 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
      *
      * @param plainTextKey 공연id + 공연일시id (goodsId + playTimeId)
      * @param metaInfo token 생성한 평문 문자열
-     * @param token
+     * @param userSeq
      * @return
      */
     @Override
-    public long activateWaitQueue(String plainTextKey, String metaInfo, String token) {
+    public long activateWaitQueue(String plainTextKey, String metaInfo, long userSeq) {
         //대기열 진입
         String waitingQueueKey = RedisKey.WAITING_KEY.getKey() + plainTextKey;
-        long score = redisWaitingRepository.insertWaitingQueue(plainTextKey, token);
+        long score = redisWaitingRepository.insertWaitingQueue(plainTextKey, userSeq);
 
         //대기열 메타정보 추가
         redisMetaRepository.insertQueueMetaInfo(RedisKey.WAITING_KEY.getMetaType(), waitingQueueKey, metaInfo);
@@ -83,14 +82,14 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
     }
 
     @Override
-    public void waitToProcessQueue(String plainTextKey, String metaInfo, String token, long queueSize) {
+    public void waitToProcessQueue(String plainTextKey, String metaInfo, long userSeq, long queueSize) {
         redisTemplate.execute((RedisCallback<String>) connection -> {
             connection.multi();
 
             String processingQueueKey = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
 
-            redisWaitingRepository.removeWaitingQueue(plainTextKey, token);                                                 //대기열 삭제
-            redisProcessingRepository.insertProcessingQueue(plainTextKey, token, QueueStatus.PROCESS.getCode());            //처리열 추가
+            redisWaitingRepository.removeWaitingQueue(plainTextKey, userSeq);                                                 //대기열 삭제
+            redisProcessingRepository.insertProcessingQueue(plainTextKey, userSeq, QueueStatus.PROCESS.getCode());            //처리열 추가
             redisMetaRepository.insertQueueMetaInfo(RedisKey.PROCESSING_KEY.getMetaType(), processingQueueKey, metaInfo);   //처리열 메타정보 추가
 
             //processingQueueKey 에 대한 처리열 최초 생성시
@@ -98,9 +97,12 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
                 long[] valueArr = Arrays.stream(metaInfo.split(","))
                                         .mapToLong(s -> Long.parseLong(s.split(":")[1]))
                                         .toArray();
-                long playDateTime = valueArr[2];
-                long timeout = TimeUnitUtil.getCurrDateTimeDiff(playDateTime);      //현재 시간 기준 timeout 시간까지 key 유효시간 설정
-                redisTemplate.expire(processingQueueKey, timeout, TimeUnit.SECONDS);
+                long playDateTime = valueArr[3];
+                long keyExpireDuration = TimeUnitUtil.getCurrDateTimeDiff(playDateTime);      //'playDateTime - 현재 시간' 까지 key 유효시간 설정
+
+                redisTemplate.expire(processingQueueKey, keyExpireDuration, TimeUnit.SECONDS);
+
+                log.info("TTL 설정 - processingQueueKey: {}, keyExpireDuration: {}", processingQueueKey, keyExpireDuration);
             }
 
             connection.exec();

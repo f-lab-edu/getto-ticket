@@ -19,8 +19,6 @@ public class RedisProcessingRepositoryImpl implements RedisProcessingRepository 
         this.hashOperations = redisTemplate.opsForHash();
     }
 
-    private final int PROCESSING_KEY_EXPIRE_SECONDS = 300; //5m, TODO 공연종료일+1까지 계산&유지
-
     @Override
     public Map<String, String> selectProcessingQueueAll(String plainTextKey) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
@@ -38,26 +36,48 @@ public class RedisProcessingRepositoryImpl implements RedisProcessingRepository 
     }
 
     @Override
-    public void insertProcessingQueue(String plainTextKey, String token, String status) {
+    public String selectProcessingQueue(String plainTextKey, long userSeq) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
-        hashOperations.put(key, token, status);
+        String field = String.valueOf(userSeq);
 
-        log.info("Processing field 추가 key: {}, token: {}, status: {}", key, token, status);
+        return hashOperations.get(key, field);
     }
 
     @Override
-    public void updateProcessingQueue(String plainTextKey, String token, String status) {
+    public boolean hasKey(String plainTextKey, long userSeq) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
-        hashOperations.put(key, token, status);
+        String field = String.valueOf(userSeq);
 
-        log.info("Processing field 수정 key: {}, token: {}, status: {}", key, token, status);
+        return hashOperations.hasKey(key, field);
     }
 
     @Override
-    public void removeProcessingQueue(String plainTextKey, String token) {
+    public void insertProcessingQueue(String plainTextKey, long userSeq, String status) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
-        hashOperations.delete(key, token);
+        String field = String.valueOf(userSeq);
 
-        log.info("Processing field 삭제 key: {}, token: {}", key, token);
+        hashOperations.put(key, field, status);
+
+        log.info("Processing field 추가 key: {}, field: {}, status: {}", key, field, status);
+    }
+
+    @Override
+    public void updateProcessingQueue(String plainTextKey, long userSeq, String status) {
+        String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
+        String field = String.valueOf(userSeq);
+
+        hashOperations.put(key, field, status);
+
+        log.info("Processing field 수정 key: {}, field: {}, status: {}", key, userSeq, status);
+    }
+
+    @Override
+    public void removeProcessingQueue(String plainTextKey, long userSeq) {
+        String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
+        String field = String.valueOf(userSeq);
+
+        hashOperations.delete(key, field);
+
+        log.info("Processing field 삭제 key: {}, field: {}", key, userSeq);
     }
 }
