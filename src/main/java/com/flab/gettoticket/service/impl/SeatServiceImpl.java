@@ -24,21 +24,21 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public List<Seat> findSeatList(long goodsId, long playId) {
         String plainTextKey = String.valueOf(goodsId + ":" + playId);
-        long waitingSize = redisWaitingRepository.selectWaitingSize(plainTextKey);
+        long seatQueueSize = redisSeatRepository.selectSeatQueueSize(plainTextKey);
         List<Seat> list = new ArrayList<>();
 
-        //대기열이 있다면
-        if(waitingSize > 0) {
+        //캐싱된 데이터
+        if(seatQueueSize > 0) {
             list = redisSeatRepository.selectSeatAll(plainTextKey);
-            log.info("Seat Caching data");
+            log.info("Seat Caching data: {}", list);
         }
 
-        if(Objects.isNull(list)) {
+        if(list.isEmpty()) {
             list = seatRepository.selectSeatList(goodsId, playId);
             log.info("Seat Database data");
         }
 
-        if(Objects.isNull(list)) {
+        if(list.isEmpty()) {
             log.error("좌석 정보 조회 중 예외 발생 goodsId: {}", goodsId);
             throw new RuntimeException("좌석 정보 조회에 실패하였습니다.");
         }
@@ -50,7 +50,7 @@ public class SeatServiceImpl implements SeatService {
     public List<Zone> findZonePrice(long id) {
         List<Zone> list = seatRepository.selectZonePrice(id);
 
-        if(Objects.isNull(list)) {
+        if(list.isEmpty()) {
             log.error("좌석 가격 조회 중 예외 발생 id: {}", id);
             throw new RuntimeException("좌석 가격 조회에 실패하였습니다.");
         }
