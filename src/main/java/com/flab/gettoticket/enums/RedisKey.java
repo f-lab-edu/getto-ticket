@@ -14,8 +14,7 @@ public enum RedisKey {
     TRAFFIC_KEY("traffic:goods::", ""),
 
     // Seat key
-    SEAT_KEY("seat:goods::", ""),
-    SEAT_SALE_YN_KEY("seat:saleYn::", "");
+    SEAT_KEY("seat:goods::", "");
 
     private final String key;
     private final String metaType;
