@@ -19,39 +19,11 @@ public class RedisCommRepositoryImpl implements RedisCommRepository{
         this.redisConnection = redisTemplate.getConnectionFactory().getConnection();
     }
 
-    private final int DEFAULT_EXPIRE_DURATION = 300; //5m
-
-    @Override
-    public void setData(String key, String value){
-        redisTemplate.opsForValue().set(key, value, DEFAULT_EXPIRE_DURATION, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public String getData(String key){
-        return (String) redisTemplate.opsForValue().get(key);
-    }
-
-    @Override
-    public void deleteData(String key){
-        redisTemplate.delete(key);
-    }
+    private final int DEFAULT_EXPIRE_DURATION = 300;
 
     @Override
     public boolean existsKey(String key) {
         return redisTemplate.hasKey(key);
     }
 
-    @Override
-    public boolean flushAllKey() {
-        boolean result = true;
-
-        try {
-            redisConnection.serverCommands().flushAll();    //return void
-        } catch(Exception e) {
-            result = false;
-            e.printStackTrace();
-        }
-
-        return result;
-    }
 }
