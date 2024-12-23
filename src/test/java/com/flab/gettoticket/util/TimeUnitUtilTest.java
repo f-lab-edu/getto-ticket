@@ -1,10 +1,18 @@
 package com.flab.gettoticket.util;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TimeUnitUtilTest {
+
+    @BeforeAll
+    static void setUp() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
     @Test
     void testGetMillsecondsToSec() {
@@ -20,13 +28,13 @@ class TimeUnitUtilTest {
     @Test
     void testMillisecondsToDateTime() {
         // Given
-        long epochTime = 1734447853162L; //2024.12.18 00:04:13
+        long epochTime = 1734447853162L; //2024.12.17 15:04:13
 
         // When
         String result = TimeUnitUtil.getMillisecondsToDateTime(epochTime);
 
         // Then
-        String expected = "2024.12.18 00:04:13"; //기대값
+        String expected = "2024.12.17 15:04:13"; //기대값
         assertThat(result).isEqualTo(expected);
     }
 
