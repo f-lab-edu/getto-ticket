@@ -63,7 +63,7 @@ public class RedisTokenServiceImpl implements RedisTokenService {
 
         boolean hasProcessingKey = redisProcessingRepository.hasKey(plainTextKey, userSeq);
         long rank = redisWaitingRepository.selectWaitingRank(plainTextKey, userSeq);
-        String status = "";
+        int status = 0;
         String reqDateTime = "";
         long score = 0L;
 

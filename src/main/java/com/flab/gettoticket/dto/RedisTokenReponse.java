@@ -15,6 +15,6 @@ public class RedisTokenReponse {
     private long goodsId;
     private long playTimeId;
     private long rank;
-    private String status;
+    private int status;
     private String reqDateTime;
 }

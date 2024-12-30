@@ -27,7 +27,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
                     , name
                     , col
                     , floor
-                    , sale_yn
+                    , status_code
                     , play_id
                 FROM seat
                 WHERE goods_id=?
@@ -38,6 +38,32 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
         List<Seat> list = jdbcTemplate.query(sql, seatRowMapper(), goodsId, playId);
 
         return list;
+    }
+
+    @Override
+    public Seat selectSeat(long seatId) {
+        String sql = """
+                SELECT 
+                    id
+                    , name
+                    , col
+                    , floor
+                    , status_code
+                    , play_id
+                FROM seat
+                WHERE id=?
+                ORDER BY floor, col, name
+                """;
+
+        List<Seat> list = jdbcTemplate.query(sql, seatRowMapper(), seatId);
+
+        Seat seat = new Seat();
+
+        if(list.isEmpty() || list == null) {
+            return seat;
+        }
+
+        return list.get(0);
     }
 
     @Override
@@ -59,14 +85,14 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
     }
 
     @Override
-    public int updateSeatSaleYn(long id, String saleYn) {
+    public int updateSeatStatusCode(long id, int statusCode) {
         String sql = """
                 UPDATE seat SET
-                    sale_yn=?
+                    status_code=?
                 WHERE id=?
                 """;
 
-        return jdbcTemplate.update(sql, saleYn, id);
+        return jdbcTemplate.update(sql, statusCode, id);
     }
 
     private RowMapper<Seat> seatRowMapper() {
@@ -75,8 +101,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
             String name = rs.getString("name");
             int col = rs.getInt("col");
             int floor = rs.getInt("floor");
-            String sale_yn = rs.getString("sale_yn");
-            char saleYn = sale_yn.charAt(0);
+            int status_code = rs.getInt("status_code");
             long playId = rs.getLong("play_id");
 
             return Seat.builder()
@@ -84,7 +109,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
                     .name(name)
                     .col(col)
                     .floor(floor)
-                    .saleYn(saleYn)
+                    .statusCode(status_code)
                     .playId(playId)
                     .build();
         });

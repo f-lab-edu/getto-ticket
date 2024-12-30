@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface SeatRepository {
     List<Seat> selectSeatList(long goodsId, long playId);
+    Seat selectSeat(long seatId);
     List<Zone> selectZonePrice(long id);
-    int updateSeatSaleYn(long id, String saleYn);
+    int updateSeatStatusCode(long id, int statusCode);
 }

@@ -12,7 +12,7 @@ public class Seat {
     private String name;
     private int col;
     private int floor;
-    private char saleYn;
+    private int statusCode;
     private long goodsId;
     private long placeId;
     private long zoneId;

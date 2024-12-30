@@ -47,6 +47,22 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    public Seat findSeat(long goodsId, long playId, long seatId) {
+        String plainTextKey = String.valueOf(goodsId + ":" + playId);
+        Seat seat = redisSeatRepository.selectSeat(plainTextKey, seatId);
+        boolean isCacheHit = true;
+
+        if(seat == null) {
+            isCacheHit = false;
+            seat = seatRepository.selectSeat(seatId);
+        }
+
+        log.info("좌석 캐시 존재 여부 isCacheHit: {}", isCacheHit);
+
+        return seat;
+    }
+
+    @Override
     public List<Zone> findZonePrice(long id) {
         List<Zone> list = seatRepository.selectZonePrice(id);
 

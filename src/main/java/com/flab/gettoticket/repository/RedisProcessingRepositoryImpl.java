@@ -36,11 +36,16 @@ public class RedisProcessingRepositoryImpl implements RedisProcessingRepository 
     }
 
     @Override
-    public String selectProcessingQueue(String plainTextKey, long userSeq) {
+    public int selectProcessingQueue(String plainTextKey, long userSeq) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
         String field = String.valueOf(userSeq);
+        String value = hashOperations.get(key, field);
 
-        return hashOperations.get(key, field);
+        if(value == null) {
+            return 0;
+        }
+
+        return Integer.parseInt(value);
     }
 
     @Override
@@ -52,21 +57,21 @@ public class RedisProcessingRepositoryImpl implements RedisProcessingRepository 
     }
 
     @Override
-    public void insertProcessingQueue(String plainTextKey, long userSeq, String status) {
+    public void insertProcessingQueue(String plainTextKey, long userSeq, int status) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
         String field = String.valueOf(userSeq);
 
-        hashOperations.put(key, field, status);
+        hashOperations.put(key, field, String.valueOf(status));
 
         log.info("Processing field 추가 key: {}, field: {}, status: {}", key, field, status);
     }
 
     @Override
-    public void updateProcessingQueue(String plainTextKey, long userSeq, String status) {
+    public void updateProcessingQueue(String plainTextKey, long userSeq, int status) {
         String key = RedisKey.PROCESSING_KEY.getKey() + plainTextKey;
         String field = String.valueOf(userSeq);
 
-        hashOperations.put(key, field, status);
+        hashOperations.put(key, field, String.valueOf(status));
 
         log.info("Processing field 수정 key: {}, field: {}, status: {}", key, userSeq, status);
     }
