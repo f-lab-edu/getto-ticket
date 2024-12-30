@@ -3,6 +3,7 @@ package com.flab.gettoticket.service.impl;
 import com.flab.gettoticket.dto.*;
 import com.flab.gettoticket.entity.*;
 import com.flab.gettoticket.enums.BookingStatus;
+import com.flab.gettoticket.enums.RedisKey;
 import com.flab.gettoticket.enums.SeatStatus;
 import com.flab.gettoticket.exception.booking.BookingIllegalArgumentException;
 import com.flab.gettoticket.exception.booking.BookingNotFoundException;
