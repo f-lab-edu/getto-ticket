@@ -3,6 +3,7 @@ package com.flab.gettoticket.service.impl;
 import com.flab.gettoticket.dto.*;
 import com.flab.gettoticket.entity.*;
 import com.flab.gettoticket.enums.BookingStatus;
+import com.flab.gettoticket.enums.RedisKey;
 import com.flab.gettoticket.enums.SeatStatus;
 import com.flab.gettoticket.exception.booking.BookingIllegalArgumentException;
 import com.flab.gettoticket.exception.booking.BookingNotFoundException;
@@ -26,12 +27,16 @@ public class BookingServiceImpl implements BookingService {
     private final GoodsRepository goodsRepository;
     private final PlayRepository playRepository;
     private final SeatRepository seatRepository;
+    private final RedisSeatRepository redisSeatRepository;
+    private final RedisDistributedRepository redisDistributedRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, GoodsRepository goodsRepository, PlayRepository playRepository, SeatRepository seatRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, GoodsRepository goodsRepository, PlayRepository playRepository, SeatRepository seatRepository, RedisSeatRepository redisSeatRepository, RedisDistributedRepository redisDistributedRepository) {
         this.bookingRepository = bookingRepository;
         this.goodsRepository = goodsRepository;
         this.playRepository = playRepository;
         this.seatRepository = seatRepository;
+        this.redisSeatRepository = redisSeatRepository;
+        this.redisDistributedRepository = redisDistributedRepository;
     }
 
     @Override
@@ -208,5 +213,71 @@ public class BookingServiceImpl implements BookingService {
 
         //좌석 상태 변경
         modifySeatStatus(seatIdList, SeatStatus.SOLD_OUT.getCode());
+    }
+
+    /**
+     * 1. 사용자가 선택한 좌석 정보 조회
+     * 2. 좌석 획득 가능 여부 체크
+     * 3. 가능시 락 획득 및 임시 예약
+     */
+    @Override
+    public boolean temporaryBooking(TemporaryBookingRequest temporaryBookingRequest) {
+        String userId = temporaryBookingRequest.getUserId();
+        long goodsId = temporaryBookingRequest.getGoodsId();
+        long playId = temporaryBookingRequest.getPlayTimeId();
+        List<Long> seatIdList = temporaryBookingRequest.getSeatIdList();
+
+        for(long seatId : seatIdList) {
+            String plainTextKey = String.valueOf(goodsId + ":" + playId);
+            String resourceKey = RedisKey.SEAT_KEY.getKey() + plainTextKey;
+            boolean isCacheHit = true;
+
+            //좌석 정보 조회
+            Seat seat = redisSeatRepository.selectSeat(plainTextKey, seatId);
+
+            if(seat == null) {
+                isCacheHit = false;
+                seat = seatRepository.selectSeat(seatId);
+            }
+
+            log.info("좌석 캐시 존재 여부 isCacheHit: {}", isCacheHit);
+            log.info("Seat seat: {}", seat);
+
+            int statusCode = seat.getStatusCode();
+
+            if(statusCode != 100) { //예약 가능
+                return false;
+            }
+
+            //좌석 획득 가능 여부 체크
+            boolean available = redisDistributedRepository.tryLock(resourceKey);
+
+            //가능시 좌석 임시 예약
+            if(available) {
+                log.info("현재 사용자가 lock 획득 userId: {}", userId);
+
+                //redis 좌석 정보 insert/update
+                Seat updateSeat = Seat.builder()
+                        .id(seatId)
+                        .name(seat.getName())
+                        .col(seat.getCol())
+                        .floor(seat.getFloor())
+                        .statusCode(SeatStatus.RESERVED.getCode())
+                        .goodsId(seat.getGoodsId())
+                        .placeId(seat.getPlaceId())
+                        .zoneId(seat.getZoneId())
+                        .playId(seat.getPlayId())
+                        .build();
+
+                if(isCacheHit) {
+                    redisSeatRepository.updateSeatInfo(plainTextKey, updateSeat);
+                }
+                else {
+                    redisSeatRepository.insertSeatInfo(plainTextKey, updateSeat);
+                }
+            }
+        }
+
+        return true;
     }
 }

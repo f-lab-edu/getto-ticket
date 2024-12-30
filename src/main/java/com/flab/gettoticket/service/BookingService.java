@@ -10,4 +10,5 @@ public interface BookingService {
     void modifyBookingToCancel(CancelBookingRequest cancelBookingRequest);
     void modifySeatStatus(List<Long> seatIdList, int seatStatusCode);
     void addBooking(AddBookingRequest addBookingRequest);
+    boolean temporaryBooking(TemporaryBookingRequest temporaryBookingRequest);
 }
