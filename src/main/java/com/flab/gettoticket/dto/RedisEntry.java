@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class RedisEntry {
     String key;
-    Object value;
+    String value;
 }

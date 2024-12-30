@@ -54,6 +54,12 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
 
         List<PlayTime> list = jdbcTemplate.query(sql, timeTableRowMapper(), playTimeId, goodsId);
 
+        PlayTime playTime = new PlayTime();
+
+        if(list.isEmpty() || list == null) {
+            return playTime;
+        }
+
         return list.get(0);
     }
 

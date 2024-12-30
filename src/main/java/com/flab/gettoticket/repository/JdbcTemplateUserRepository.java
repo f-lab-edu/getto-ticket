@@ -20,18 +20,21 @@ public class JdbcTemplateUserRepository implements UserRepository{
 
     @Override
     public int saveUser(SignupReqeust signupReqeust) {
+        String sqlForSequence = "SELECT NEXTVAL(users_seq) FROM DUAL";
         String sql = "INSERT INTO users (email,name,password) VALUES (?,?,?)";
 
+        String usersSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
+        long seq = Long.parseLong(usersSeq);
         String email = signupReqeust.getEmail();
         String name = signupReqeust.getName();
         String password = signupReqeust.getPassword();
 
-        return jdbcTemplate.update(sql, email, name, password);
+        return jdbcTemplate.update(sql, seq, email, name, password);
     }
 
     @Override
     public Optional<Users> findUserEmail(String email) {
-        String sql = "SELECT email, name, password, created_at FROM users WHERE email=?";
+        String sql = "SELECT seq, email, name, password, created_at FROM users WHERE email=?";
 
         List<Users> user = jdbcTemplate.query(sql, usersRowMapper(), email);
 
@@ -41,6 +44,7 @@ public class JdbcTemplateUserRepository implements UserRepository{
     private RowMapper<Users> usersRowMapper() {
         return ((rs, rowNum) -> {
             Users user = new Users();
+            user.setSeq((rs.getLong("seq")));
             user.setEmail(rs.getString("email"));
             user.setName(rs.getString("name"));
             user.setPassword(rs.getString("password"));
