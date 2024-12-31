@@ -45,7 +45,7 @@ public class TemporaryBookingTest {
     private static final long SEAT_ID = 1L;
 
     @BeforeEach
-    void setup() {
+    void setup() throws InterruptedException {
         // Mock 초기화
         Seat seat = Seat.builder()
                 .id(SEAT_ID)
