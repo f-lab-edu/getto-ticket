@@ -7,6 +7,8 @@ import com.flab.gettoticket.enums.RedisKey;
 import com.flab.gettoticket.enums.SeatStatus;
 import com.flab.gettoticket.exception.booking.BookingIllegalArgumentException;
 import com.flab.gettoticket.exception.booking.BookingNotFoundException;
+import com.flab.gettoticket.exception.lock.DistributedIllegalMonitorStateException;
+import com.flab.gettoticket.exception.lock.DistributedInterruptedException;
 import com.flab.gettoticket.repository.*;
 import com.flab.gettoticket.service.BookingService;
 import com.flab.gettoticket.validation.BookingValidator;
@@ -250,7 +252,15 @@ public class BookingServiceImpl implements BookingService {
             }
 
             //좌석 획득 가능 여부 체크
-            boolean available = redisDistributedRepository.tryLock(resourceKey);
+            boolean available = false;
+
+            try {
+                available = redisDistributedRepository.tryLock(resourceKey);
+            } catch (InterruptedException e) {
+                throw new DistributedInterruptedException("lock 획득에 실패했습니다.");
+            } catch (IllegalMonitorStateException e) {
+                throw new DistributedIllegalMonitorStateException("이미 unlock 처리된 lock 입니다");
+            }
 
             //가능시 좌석 임시 예약
             if(available) {

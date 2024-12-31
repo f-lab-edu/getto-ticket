@@ -1,7 +1,5 @@
 package com.flab.gettoticket.repository;
 
-import com.flab.gettoticket.exception.lock.DistributedIllegalMonitorStateException;
-import com.flab.gettoticket.exception.lock.DistributedInterruptedException;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -24,16 +22,16 @@ public class RedisDistributedRepositoryImpl implements RedisDistributedRepositor
     private final TimeUnit TIME_UNTIT = TimeUnit.SECONDS;
 
     @Override
-    public boolean tryLock(String resourceKey) {
+    public boolean tryLock(String resourceKey) throws InterruptedException {
         return tryWithParams(resourceKey, WAIT_TIME, LEASE_TIME, TIME_UNTIT);
     }
 
     @Override
-    public boolean tryLock(String resourceKey, long waitTime, long leaseTime, TimeUnit timeUnit) {
+    public boolean tryLock(String resourceKey, long waitTime, long leaseTime, TimeUnit timeUnit) throws InterruptedException {
         return tryWithParams(resourceKey, waitTime, leaseTime, timeUnit);
     }
 
-    private boolean tryWithParams(String resourceKey, long waitTime, long leaseTime, TimeUnit timeUnit) {
+    private boolean tryWithParams(String resourceKey, long waitTime, long leaseTime, TimeUnit timeUnit) throws InterruptedException {
         boolean available = false;
         String lockName = LOCK_NAME_PREFIX + resourceKey;
         RLock rLock = redissonClient.getLock(lockName);
@@ -41,9 +39,6 @@ public class RedisDistributedRepositoryImpl implements RedisDistributedRepositor
         try {
             available = rLock.tryLock(waitTime, leaseTime, timeUnit);
             log.info("tryLock 완료: {}", rLock.getName());
-        } catch (InterruptedException e) {
-            log.info("catch exception - lock name: {}", rLock.getName());
-            throw new DistributedInterruptedException("lock 획득에 실패했습니다.");
         } finally {
             safelyUnlock(rLock);
         }
@@ -51,14 +46,12 @@ public class RedisDistributedRepositoryImpl implements RedisDistributedRepositor
         return available;
     }
 
-    private void safelyUnlock(RLock rLock) {
-        try{
+    private void safelyUnlock(RLock rLock) throws IllegalMonitorStateException {
+        try {
             if (rLock.isHeldByCurrentThread()) {    //락 점유 여부 확인
                 rLock.unlock();
                 log.info("unlock 완료: {}", rLock.getName());
             }
-        } catch (IllegalMonitorStateException e) {
-            log.info("이미 unlock 처리된 lock 입니다. lock name: {}", rLock.getName());
-        }
+        } finally {}
     }
 }
