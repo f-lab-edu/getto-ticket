@@ -13,4 +13,5 @@ public class BookingSeat {
     private BookingStatus status;
     private long bookingId;
     private long seatId;
+    private String userId;
 }

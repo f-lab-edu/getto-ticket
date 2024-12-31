@@ -1,18 +1,13 @@
 package com.flab.gettoticket.service.impl;
 
 import com.flab.gettoticket.dto.*;
-import com.flab.gettoticket.entity.Booking;
-import com.flab.gettoticket.entity.BookingSeat;
-import com.flab.gettoticket.entity.Goods;
-import com.flab.gettoticket.entity.PlayTime;
+import com.flab.gettoticket.entity.*;
 import com.flab.gettoticket.enums.BookingStatus;
+import com.flab.gettoticket.enums.RedisKey;
 import com.flab.gettoticket.enums.SeatStatus;
 import com.flab.gettoticket.exception.booking.BookingIllegalArgumentException;
 import com.flab.gettoticket.exception.booking.BookingNotFoundException;
-import com.flab.gettoticket.repository.BookingRepository;
-import com.flab.gettoticket.repository.GoodsRepository;
-import com.flab.gettoticket.repository.PlayRepository;
-import com.flab.gettoticket.repository.SeatRepository;
+import com.flab.gettoticket.repository.*;
 import com.flab.gettoticket.service.BookingService;
 import com.flab.gettoticket.validation.BookingValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -144,25 +139,26 @@ public class BookingServiceImpl implements BookingService {
                     .id(obj.getId())
                     .status(bookingStatus)
                     .bookingId(bookingId)
+                    .userId(userId)
                     .build();
 
             bookingRepository.updateBookingSeat(bookingSeat);
         }
 
-        String saleYn = "N";
+        int statusCode = 300;
         List<Long> seatIdList = new ArrayList<>();
 
         for(BookingSeat obj : bookingSeatsList) {
             seatIdList.add(obj.getSeatId());
         }
 
-        modifySeatStatus(seatIdList, saleYn);
+        modifySeatStatus(seatIdList, statusCode);
     }
 
     @Override
-    public void modifySeatStatus(List<Long> seatIdList, String saleYn) {
+    public void modifySeatStatus(List<Long> seatIdList, int statusCode) {
         for (Long seatId : seatIdList) {
-            seatRepository.updateSeatSaleYn(seatId, saleYn);
+            seatRepository.updateSeatStatusCode(seatId, statusCode);
         }
     }
 
@@ -204,8 +200,10 @@ public class BookingServiceImpl implements BookingService {
                     .status(bookingStatus)
                     .bookingId(bookingId)
                     .seatId(seatId)
+                    .userId(userId)
                     .build();
 
+            //예매 좌석 확정
             bookingRepository.insertBookingSeat(bookingSeat);
         }
 

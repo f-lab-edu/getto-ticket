@@ -129,7 +129,6 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         return bookingSeatLastSeq != null ? Long.parseLong(bookingSeatLastSeq) : 0L;
     }
 
-    @Transactional
     @Override
     public void updateBooking(Booking booking) {
         String sql = """
@@ -143,31 +142,31 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         long id = booking.getId();
         String userId = booking.getUserId();
         BookingStatus bookingStatus = booking.getStatus();
-        String status = bookingStatus.getCode();
+        int status = bookingStatus.getCode();
 
         jdbcTemplate.update(sql, status, id, userId);
     }
 
-    @Transactional
     @Override
     public void updateBookingSeat(BookingSeat bookingSeat) {
         String sql = """
                 UPDATE booking_seat SET
                     status=?
+                    , booking_id=?
                     , update_at=now()
                 WHERE id=?
-                AND booking_id=?
+                AND user_id=?
                 """;
 
         long id = bookingSeat.getId();
         long bookigId = bookingSeat.getBookingId();
         BookingStatus bookingStatus = bookingSeat.getStatus();
-        String status = bookingStatus.getCode();
+        int status = bookingStatus.getCode();
+        String userId = bookingSeat.getUserId();
 
-        jdbcTemplate.update(sql, status, id, bookigId);
+        jdbcTemplate.update(sql, status, bookigId, id, userId);
     }
 
-    @Transactional
     @Override
     public long insertBooking(Booking booking) {
         String sqlForSequence = "SELECT NEXTVAL(booking_seq) FROM DUAL";
@@ -187,7 +186,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         String bookingSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
         long id = bookingSeq != null ? Long.parseLong(bookingSeq) : 0L;
         BookingStatus bookingStatus = booking.getStatus();
-        String status = bookingStatus.getCode();
+        int status = bookingStatus.getCode();
         long goodsId = booking.getGoodsId();
         long playTimeId = booking.getPlayTimeId();
         String userId = booking.getUserId();
@@ -201,7 +200,6 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
         return seq;
     }
 
-    @Transactional
     @Override
     public void insertBookingSeat(BookingSeat bookingSeat) {
         String sqlForSequence = "SELECT NEXTVAL(bookingSeat_seq) FROM DUAL";
@@ -212,24 +210,26 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
                     , status
                     , booking_id
                     , seat_id
+                    , user_id
                 )
-                VALUES (?,?,?,?)    
+                VALUES (?,?,?,?,?)
                 """;
 
         String bookingSeatSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);
         long id = bookingSeatSeq != null ? Long.parseLong(bookingSeatSeq) : 0L;
         BookingStatus bookingStatus = bookingSeat.getStatus();
-        String status = bookingStatus.getCode();
+        int status = bookingStatus.getCode();
         long bookingId = bookingSeat.getBookingId();
         long seatId = bookingSeat.getSeatId();
+        String userId = bookingSeat.getUserId();
 
-        jdbcTemplate.update(sql, id, status, bookingId, seatId);
+        jdbcTemplate.update(sql, id, status, bookingId, seatId, userId);
     }
 
     private RowMapper<Booking> bookingRowMapper() {
         return ((rs, rowNum) -> {
             long id = rs.getLong("id");
-            String status = rs.getString("status");
+            int status = rs.getInt("status");
             long goodsId = rs.getLong("goods_id");
             long playTimeId = rs.getLong("play_time_id");
             String userid = rs.getString("user_id");
@@ -252,7 +252,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
     private RowMapper<BookingSeat> bookingSeatRowMapper() {
         return ((rs, rowNum) -> {
             long id = rs.getLong("id");
-            String status = rs.getString("status");
+            int status = rs.getInt("status");
             long seatId = rs.getLong("seat_id");
 
             BookingStatus bookingStatus = BookingStatus.setCode(status);
@@ -268,7 +268,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
     private RowMapper<BookingSeatDetail> bookingSeatDetailMapper() {
         return ((rs, rowNum) -> {
             long bookingSeatId = rs.getLong("id");
-            String bookingSeatStatus = rs.getString("status");
+            int bookingSeatStatus = rs.getInt("status");
             String zoneName = rs.getString("zone_name");
             int grade = rs.getInt("grade");
             int price = rs.getInt("price");

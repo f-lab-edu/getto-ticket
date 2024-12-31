@@ -1,19 +1,19 @@
 package com.flab.gettoticket.enums;
 
 public enum BookingStatus {
-    UPCOMING("upcoming", "다가오는 예매"),
-    COMPLETED("completed", "완료된 예매"),
-    CANCELLED("cancelled", "취소된 예매");
+    UPCOMING(100, "다가오는 예매"),
+    COMPLETED(200, "완료된 예매"),
+    CANCELLED(300, "취소된 예매");
 
-    private final String code;
+    private final int code;
     private final String description;
 
-    BookingStatus(String code, String description) {
+    BookingStatus(int code, String description) {
         this.code = code;
         this.description = description;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
@@ -22,13 +22,13 @@ public enum BookingStatus {
     }
 
     /**
-     * 문자열 -> enum
-     * @param code "completed"
+     * 정수 code -> enum
+     * @param code 100, 200..
      * @return "COMPLETED"
      */
-    public static BookingStatus setCode(String code) {
+    public static BookingStatus setCode(int code) {
         for (BookingStatus status : values()) {
-            if (status.code.equalsIgnoreCase(code)) {
+            if (status.code == code) {
                 return status;
             }
         }

@@ -199,19 +199,19 @@ class BookingServiceImplTest {
         //좌석 상태 변경
         doAnswer(invocation -> {
             long seatId = invocation.getArgument(0);
-            String saleYn = invocation.getArgument(1);
-            assertThat(saleYn).isEqualTo("N");
+            int statusCode = invocation.getArgument(1);
+            assertThat(statusCode).isEqualTo(300);
 
             if (seatId == 0L) {
                 return 0;
             }
 
             return 1;
-        }).when(seatRepository).updateSeatSaleYn(anyLong(), anyString());
+        }).when(seatRepository).updateSeatStatusCode(anyLong(), anyInt());
 
-        String saleYn = "N";
+        int seatStatusCode = 300;
         for (long seatId : seatIdList) {
-            int result = seatRepository.updateSeatSaleYn(seatId, saleYn);
+            int result = seatRepository.updateSeatStatusCode(seatId, seatStatusCode);
 
             if (seatId == 0L) {
                 assertEquals(0, result);
@@ -278,7 +278,7 @@ class BookingServiceImplTest {
         //좌석 상태 변경
         doAnswer(invocation -> {
             return 1;
-        }).when(seatRepository).updateSeatSaleYn(anyLong(), anyString());
+        }).when(seatRepository).updateSeatStatusCode(anyLong(), anyInt());
 
         //when
         bookingServiceImpl.addBooking(addBookingRequest);

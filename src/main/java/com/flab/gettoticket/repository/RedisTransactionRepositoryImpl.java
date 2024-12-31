@@ -47,7 +47,7 @@ public class RedisTransactionRepositoryImpl implements RedisTransactionRepositor
                     waitingQueue.forEach(queue -> {
                         String seq = queue.getValue();
                         long userSeq = Long.parseLong(seq);
-                        String status = QueueStatus.PROCESS.getCode();
+                        int status = QueueStatus.PROCESS.getCode();
 
                         redisProcessingRepository.insertProcessingQueue(plainTextKey, userSeq, status);   //처리열 추가
                         redisWaitingRepository.removeWaitingQueue(plainTextKey, userSeq);                 //대기열 삭제

@@ -2,10 +2,7 @@ package com.flab.gettoticket.controller;
 
 import com.flab.gettoticket.common.ApiResponse;
 import com.flab.gettoticket.common.ApiResponseCode;
-import com.flab.gettoticket.dto.AddBookingRequest;
-import com.flab.gettoticket.dto.BookingDetailResponse;
-import com.flab.gettoticket.dto.BookingListResponse;
-import com.flab.gettoticket.dto.CancelBookingRequest;
+import com.flab.gettoticket.dto.*;
 import com.flab.gettoticket.service.BookingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/booking")
+@RequestMapping("/v1/booking")
 @Slf4j
 public class BookingController {
 
