@@ -9,5 +9,6 @@ public interface RedisSeatRepository {
     Seat selectSeat(String plainTextKey, long seatId);
     long selectSeatQueueSize(String plainTextKey);
     void insertSeatInfo(String plainTextKey, Seat seat);
+    void updateSeatInfo(String plainTextKey, Seat seat);
     void deleteSeatInfo(String plainTextKey, long seatId);
 }

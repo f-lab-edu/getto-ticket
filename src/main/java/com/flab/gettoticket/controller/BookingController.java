@@ -57,4 +57,13 @@ public class BookingController {
         String message = ApiResponseCode.BOOKING_SUCCESS.getMessage();
         return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.BOOKING_SUCCESS.getCode(), message));
     }
+
+    // 임시 예매 하기
+    @PostMapping("/temporary")
+    public ResponseEntity<ApiResponse<Void>> temporaryBooking(@RequestBody TemporaryBookingRequest temporaryBookingRequest) {
+        bookingService.temporaryBooking(temporaryBookingRequest);
+
+        String message = ApiResponseCode.TEMPORARY_SUCCESS.getMessage();
+        return ResponseEntity.ok(ApiResponse.create(ApiResponseCode.TEMPORARY_SUCCESS.getCode(), message));
+    }
 }

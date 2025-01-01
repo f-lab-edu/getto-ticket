@@ -212,7 +212,7 @@ public class JdbcTemplateBookingRepository implements BookingRepository{
                     , seat_id
                     , user_id
                 )
-                VALUES (?,?,?,?,?)
+                VALUES (?,?,?,?,?)    
                 """;
 
         String bookingSeatSeq = jdbcTemplate.queryForObject(sqlForSequence, String.class);

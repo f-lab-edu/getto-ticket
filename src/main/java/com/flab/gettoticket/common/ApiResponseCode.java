@@ -14,6 +14,7 @@ public enum ApiResponseCode {
 
     //예매
     BOOKING_SUCCESS(100, "예매에 성공하였습니다."),
+    TEMPORARY_SUCCESS(100, "좌석 임시 예약에 성공하였습니다."),
     BOOKING_CANCLE_SUCCESS(100, "예매 취소가 완료되었습니다.");
 
     private final int code;

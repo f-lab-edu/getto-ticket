@@ -36,6 +36,8 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.40.2'
+
 
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

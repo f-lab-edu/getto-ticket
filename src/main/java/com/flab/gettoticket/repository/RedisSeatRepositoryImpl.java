@@ -57,6 +57,18 @@ public class RedisSeatRepositoryImpl implements RedisSeatRepository{
     }
 
     @Override
+    public void updateSeatInfo(String plainTextKey, Seat seat) {
+        long seatId = seat.getId();
+
+        String key = RedisKey.SEAT_KEY.getKey() + plainTextKey;
+        String field = String.valueOf(seatId);
+
+        hashOps.put(key, field, seat);
+
+        log.info("Seat field 수정 key: {}, seatId: {}, Seat: {}", key, field, seat);
+    }
+
+    @Override
     public void deleteSeatInfo(String plainTextKey, long seatId) {
         String key = RedisKey.SEAT_KEY.getKey() + plainTextKey;
         String field = String.valueOf(seatId);
