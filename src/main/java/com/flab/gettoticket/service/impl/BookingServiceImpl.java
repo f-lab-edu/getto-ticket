@@ -257,9 +257,10 @@ public class BookingServiceImpl implements BookingService {
             try {
                 available = redisDistributedRepository.tryLock(resourceKey);
             } catch (InterruptedException e) {
-                throw new DistributedInterruptedException("lock 획득에 실패했습니다.");
+                Thread.currentThread().interrupt();
+                throw new DistributedInterruptedException("lock 획득에 실패했습니다.", e);
             } catch (IllegalMonitorStateException e) {
-                throw new DistributedIllegalMonitorStateException("이미 unlock 처리된 lock 입니다");
+                throw new DistributedIllegalMonitorStateException("이미 unlock 처리된 lock 입니다", e);
             }
 
             //가능시 좌석 임시 예약
