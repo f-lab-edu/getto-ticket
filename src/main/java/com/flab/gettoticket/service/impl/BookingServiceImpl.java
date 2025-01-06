@@ -14,6 +14,7 @@ import com.flab.gettoticket.service.BookingService;
 import com.flab.gettoticket.validation.BookingValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -117,6 +118,7 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
+    @Transactional
     @Override
     public void modifyBookingToCancel(CancelBookingRequest cancelBookingRequest) {
         long bookingId = cancelBookingRequest.getBookingId();
@@ -168,6 +170,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
     public void addBooking(AddBookingRequest addBookingRequest) {
         BookingStatus bookingStatus = addBookingRequest.getBookingStatus();
