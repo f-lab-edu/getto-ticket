@@ -1,6 +1,6 @@
 package com.flab.gettoticket.repository;
 
-import com.flab.gettoticket.dto.SeatCountDTO;
+import com.flab.gettoticket.dto.SeatCountResponse;
 import com.flab.gettoticket.entity.PlayTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class JdbcTemplatePlayRepositoryTest {
         when(playRepository.selectSeatCount(playTimeId))
                 .thenReturn(Collections.emptyList());
 
-        List<SeatCountDTO> list = playRepository.selectSeatCount(playTimeId);
+        List<SeatCountResponse> list = playRepository.selectSeatCount(playTimeId);
 
         //then
         assertThat(list).isEmpty();

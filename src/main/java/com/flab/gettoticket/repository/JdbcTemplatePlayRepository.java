@@ -1,6 +1,6 @@
 package com.flab.gettoticket.repository;
 
-import com.flab.gettoticket.dto.SeatCountDTO;
+import com.flab.gettoticket.dto.SeatCountResponse;
 import com.flab.gettoticket.entity.PlayTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -54,17 +54,11 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
 
         List<PlayTime> list = jdbcTemplate.query(sql, timeTableRowMapper(), playTimeId, goodsId);
 
-        PlayTime playTime = new PlayTime();
-
-        if(list.isEmpty() || list == null) {
-            return playTime;
-        }
-
-        return list.get(0);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
-    public List<SeatCountDTO> selectSeatCount(long playTimeId) {
+    public List<SeatCountResponse> selectSeatCount(long playTimeId) {
         String sql = """
                     SELECT b.grade, b.name, count(b.name) AS `count`
                     FROM seat a
@@ -75,7 +69,7 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
                     ORDER BY a.name
                     """;
 
-        List<SeatCountDTO> list = jdbcTemplate.query(sql, seatCountRowMapper(), playTimeId);
+        List<SeatCountResponse> list = jdbcTemplate.query(sql, seatCountRowMapper(), playTimeId);
 
         return list;
     }
@@ -97,13 +91,13 @@ public class JdbcTemplatePlayRepository implements PlayRepository {
         });
     }
 
-    private RowMapper<SeatCountDTO> seatCountRowMapper() {
+    private RowMapper<SeatCountResponse> seatCountRowMapper() {
         return ((rs, rowNum) -> {
             String grade = rs.getString("grade");
             String zoneName = rs.getString("name");
             int count = rs.getInt("count");
 
-            return new SeatCountDTO(grade, zoneName, count);
+            return new SeatCountResponse(grade, zoneName, count);
         });
     }
 }

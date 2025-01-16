@@ -1,8 +1,8 @@
 package com.flab.gettoticket.controller;
 
 import com.flab.gettoticket.common.ApiResponse;
-import com.flab.gettoticket.dto.PlayTimeDTO;
-import com.flab.gettoticket.entity.PlayTime;
+import com.flab.gettoticket.dto.PlayOrderListResponse;
+import com.flab.gettoticket.dto.PlayTimeResponse;
 import com.flab.gettoticket.service.PlayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -45,11 +45,11 @@ public class PlayController {
      * @return
      */
     @GetMapping("/order/list")
-    public ResponseEntity<ApiResponse<List<PlayTime>>> playOrderList(
+    public ResponseEntity<ApiResponse<List<PlayOrderListResponse>>> playOrderList(
             @RequestParam long goodsId
             , @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate playAt
     ) {
-        List<PlayTime> data = playService.findPlayOrder(goodsId, playAt);
+        List<PlayOrderListResponse> data = playService.findPlayOrder(goodsId, playAt);
         return ResponseEntity.ok(ApiResponse.ok(data));
     }
 
@@ -59,11 +59,11 @@ public class PlayController {
      *  2. (예: 배우정보)
      */
     @GetMapping("/order")
-    public ResponseEntity<ApiResponse<PlayTimeDTO>> playOrderInfo(
+    public ResponseEntity<ApiResponse<PlayTimeResponse>> playOrderInfo(
             @RequestParam long playTimeId
             , @RequestParam long goodsId
     ) {
-        PlayTimeDTO data = playService.findPlayTimeDTO(playTimeId, goodsId);
+        PlayTimeResponse data = playService.findPlayTimeDTO(playTimeId, goodsId);
         return ResponseEntity.ok(ApiResponse.ok(data));
     }
 }

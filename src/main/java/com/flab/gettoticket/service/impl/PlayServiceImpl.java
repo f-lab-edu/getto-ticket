@@ -1,7 +1,8 @@
 package com.flab.gettoticket.service.impl;
 
-import com.flab.gettoticket.dto.PlayTimeDTO;
-import com.flab.gettoticket.dto.SeatCountDTO;
+import com.flab.gettoticket.dto.PlayOrderListResponse;
+import com.flab.gettoticket.dto.PlayTimeResponse;
+import com.flab.gettoticket.dto.SeatCountResponse;
 import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.repository.PlayRepository;
 import com.flab.gettoticket.service.PlayService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -26,7 +26,7 @@ public class PlayServiceImpl implements PlayService {
     public List<String> findPlayAtList(long goodsId, LocalDate startDate, LocalDate endDate) {
         List<String> list = playRepository.selectPlayAtList(goodsId, startDate, endDate);
 
-        if(Objects.isNull(list)) {
+        if(list.isEmpty()) {
             log.error("공연일 리스트 조회 중 예외 발생 goodsId: {}, startDate: {}, endDate: {}", goodsId, startDate, endDate);
             throw new RuntimeException("공연일 리스트 조회에 실패했습니다.");
         }
@@ -35,38 +35,43 @@ public class PlayServiceImpl implements PlayService {
     }
 
     @Override
-    public List<PlayTime> findPlayOrder(long goodsId, LocalDate playAt) {
-        List<PlayTime> list = playRepository.selectTimeTableList(goodsId, playAt);
+    public List<PlayOrderListResponse> findPlayOrder(long goodsId, LocalDate playAt) {
+        List<PlayTime> data = playRepository.selectTimeTableList(goodsId, playAt);
+        List<PlayOrderListResponse> list = new ArrayList<>();
 
-        if(Objects.isNull(list)) {
+        if(data.isEmpty()) {
             log.error("공연 회차 순서 리스트 조회 중 예외 발생 goodsId: {}, playAt: {}", goodsId, playAt);
             throw new RuntimeException("공연 회차 순서 리스트 조회에 실패했습니다.");
+        }
+
+        for(PlayTime playTime : data) {
+            PlayOrderListResponse response = PlayOrderListResponse.builder()
+                                        .playAt(playTime.getPlayAt())
+                                        .playOrder(playTime.getPlayOrder())
+                                        .playTime(playTime.getPlayTime())
+                                        .playTimeId(playTime.getPlayTimeId())
+                                        .build();
+
+            list.add(response);
         }
 
         return list;
     }
 
     @Override
-    public PlayTimeDTO findPlayTimeDTO(long playTimeId, long goodsId) {
+    public PlayTimeResponse findPlayTimeDTO(long playTimeId, long goodsId) {
         PlayTime playTime = playRepository.selectTimeTable(playTimeId, goodsId);
-        List<SeatCountDTO> seatCountDTOList = new ArrayList<>();
+        List<SeatCountResponse> seatCountDTOList = findSeatCount(playTimeId);
         List<String> actorList = new ArrayList<>();
 
-        if(Objects.isNull(playTime)) {
-            log.error("회차 정보 조회 중 예외 발생 playTimeId: {}, goodsId: {}", playTimeId, goodsId);
-            throw new RuntimeException("회차 정보 조회에 실패했습니다.");
-        }
-
-        seatCountDTOList = findSeatCount(playTimeId);
-
-        return new PlayTimeDTO(playTime, seatCountDTOList, actorList);
+        return new PlayTimeResponse(playTime, seatCountDTOList, actorList);
     }
 
     @Override
-    public List<SeatCountDTO> findSeatCount(long playTimeId) {
-        List<SeatCountDTO> list = playRepository.selectSeatCount(playTimeId);
+    public List<SeatCountResponse> findSeatCount(long playTimeId) {
+        List<SeatCountResponse> list = playRepository.selectSeatCount(playTimeId);
 
-        if(Objects.isNull(list)) {
+        if(list.isEmpty()) {
             log.error("회차별 구역 잔여 좌석 개수 playTimeId: {}", playTimeId);
             throw new RuntimeException("회차별 구역 잔여 좌석 개수 조회에 실패했습니다.");
         }
