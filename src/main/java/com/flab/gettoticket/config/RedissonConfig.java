@@ -17,8 +17,8 @@ public class RedissonConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("${spring.data.redis.password:}")
-    private String password;
+//    @Value("${spring.data.redis.password}")
+//    private String password;
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
 
@@ -28,8 +28,8 @@ public class RedissonConfig {
 
         // Redis 서버 설정
         config.useSingleServer()
-                .setAddress(REDISSON_HOST_PREFIX + host + ":" + port)
-                .setPassword(password);
+                .setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+//                .setPassword(password);
 
         // RedissonClient 반환
         return Redisson.create(config);

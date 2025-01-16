@@ -1,7 +1,7 @@
 package com.flab.gettoticket.controller;
 
-import com.flab.gettoticket.dto.PlayTimeDTO;
-import com.flab.gettoticket.dto.SeatCountDTO;
+import com.flab.gettoticket.dto.PlayTimeResponse;
+import com.flab.gettoticket.dto.SeatCountResponse;
 import com.flab.gettoticket.handler.GlobalExceptionHandler;
 import com.flab.gettoticket.entity.PlayTime;
 import com.flab.gettoticket.service.PlayService;
@@ -113,10 +113,10 @@ class PlayControllerTest {
         PlayTime playTime = new PlayTime(playAt, 1, 1600, 1);
         List<String> actorList = new ArrayList<>();
 
-        PlayTimeDTO playTimeDTO = new PlayTimeDTO(playTime
+        PlayTimeResponse playTimeDTO = new PlayTimeResponse(playTime
                 , Arrays.asList(
-                        new SeatCountDTO("1", "VIP", 3),
-                        new SeatCountDTO("2", "S", 4)
+                        new SeatCountResponse("1", "VIP", 3),
+                        new SeatCountResponse("2", "S", 4)
                 )
                 , actorList
         );

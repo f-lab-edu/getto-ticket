@@ -75,7 +75,6 @@ public class JdbcTemplateGoodsRepository implements GoodsRepository{
         return goodsList.isEmpty() ? null : goodsList.get(0);
     }
 
-    @Transactional
     @Override
     public int insertGoods(Goods goods) {
         String sqlForSequence = "SELECT NEXTVAL(goods_seq) FROM DUAL";

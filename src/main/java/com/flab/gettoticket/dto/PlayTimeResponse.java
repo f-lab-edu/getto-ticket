@@ -8,12 +8,12 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PlayTimeDTO {
+public class PlayTimeResponse {
     private PlayTime playTime;
-    private List<SeatCountDTO> seatCountList;
+    private List<SeatCountResponse> seatCountList;
     private List<String> actorList;
 
-    public PlayTimeDTO(PlayTime playTime, List<SeatCountDTO> seatCountList, List<String> actorList) {
+    public PlayTimeResponse(PlayTime playTime, List<SeatCountResponse> seatCountList, List<String> actorList) {
         this.playTime = playTime;
         this.seatCountList = seatCountList;
         this.actorList = actorList;

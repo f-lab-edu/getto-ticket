@@ -57,13 +57,7 @@ public class JdbcTemplateSeatRepository implements SeatRepository{
 
         List<Seat> list = jdbcTemplate.query(sql, seatRowMapper(), seatId);
 
-        Seat seat = new Seat();
-
-        if(list.isEmpty() || list == null) {
-            return seat;
-        }
-
-        return list.get(0);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
